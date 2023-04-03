@@ -17,6 +17,7 @@ from core.utils.FileReader import read_data_file
 from core.utils.PrintHelper import print_with_header
 from core.utils.RFRModel import get_rfr_model, save_model
 # other
+from art import tprint
 
 
 # LabelEncoder dict
@@ -62,6 +63,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.init_ui()
+        self.show()
 
     def init_ui(self):
         self.ui.b_file_open.clicked.connect(self.pick_file)
@@ -71,14 +73,13 @@ class MainWindow(QtWidgets.QMainWindow):
         file_dialog.setFileMode(QFileDialog.ExistingFile)
         file_name = file_dialog.getOpenFileName(
             self,
-            Constants.FILE_EXPL_HEADER,
-            Constants.FILE_EXPL_START_PATH,
-            Constants.FILE_EXPL_START_PATH)
+            caption=Constants.FILE_EXPL_HEADER,
+            directory=Constants.FILE_EXPL_START_PATH,
+            filter=Constants.FILE_EXPL_TYPES)
+
+        tprint("TR")
 
         process_data(file_name[0])  # file_name[0] - полное имя файла file_name[1] - типы файлов
-
-
-application = MainWindow()
 
 
 def fit_model(x_trn, y_trn, x_test, y_test):
@@ -186,5 +187,5 @@ if __name__ == "__main__":
 
     # Работа с Qt приложением
     app = QtWidgets.QApplication(sys.argv)
-    application.show()
+    application = MainWindow()
     sys.exit(app.exec())
