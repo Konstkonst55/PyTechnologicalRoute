@@ -22,11 +22,6 @@ from art import tprint
 
 # LabelEncoder dict
 le_dict = {}
-
-# названия колонок данных, которые нужно трансформировать
-data_cols_name_list = ['name', 'osn', 'mark', 'spf', 'tt']
-predict_cols_name_list = ['name', 'mark', 'spf', 'tt']
-
 sample_weights = [.3, .7, .7, .7, .5, 1, .3]  # todo настроить веса
 
 # README
@@ -97,11 +92,11 @@ def process_data(file_name: str):
             print_with_header("Корреляция", str(dataset.corr(numeric_only=True)))
 
             # Удаление идентификаторов, т.к. они не участвуют в обучении
-            if 'uid' in dataset.columns.names:
+            if 'uid' in dataset.columns:
                 dataset = dataset.drop('uid', axis=1)
 
             # Обучение кодировщика на всех входных данных и преобразование данных
-            dataset = fit_transform_data(dataset, data_cols_name_list)
+            dataset = fit_transform_data(dataset)
 
             # Разбиение данных на прогнозируемые и обучающие
             trg_data = dataset[['osn']].values.ravel()
@@ -123,8 +118,8 @@ def process_data(file_name: str):
                 x_test=x_test,
                 y_test=y_test
             )
-    except KeyError as ke:
-        print(ke)
+    except KeyError:
+        print("key error")
 
 
 def fit_model(x_trn, y_trn, x_test, y_test):
@@ -138,7 +133,7 @@ def fit_model(x_trn, y_trn, x_test, y_test):
     print_model_info(model, x_test, y_test)
 
     # Прогнозирование цехов по входным данным
-    predict = model.predict(transform_data(predict_test_data, predict_cols_name_list))
+    predict = model.predict(transform_data(predict_test_data))
     predict_test_data.insert(5, 'osn', int(predict))
 
     # Вывод спрогнозированного результата в приложении
@@ -148,32 +143,41 @@ def fit_model(x_trn, y_trn, x_test, y_test):
     )
 
 
-def fit_transform_data(df: DataFrame, col_names: list[str]):
+def fit_transform_data(df: DataFrame):
     """
     Обучение и преобразование текстовых данных в числовой эквивалент по категориальным признакам
     :param df: входные данные
-    :param col_names: список названий колонок, подлежащих обучению и преобразованию
     :return: DataFrame
     """
-    for col in col_names:
-        le_dict[col] = LabelEncoder()
-        df[col] = le_dict[col].fit_transform(df.astype(str).__getattr__(col))
+    for col in df.columns:
+        first = df.loc[df.index[0], col]
+        if isinstance(first, str) or first == -1:
+            le_dict[col] = LabelEncoder()
+            df[col] = le_dict[col].fit_transform(df.astype(str).__getattr__(col))
     return df
 
 
-def transform_data(df: DataFrame, col_names: list[str]):
+def transform_data(df: DataFrame):
     """
-        Преобразование текстовых данных в числовой эквивалент по обученным категориальным признакам
-        :param df: входные данные
-        :param col_names: список названий колонок, подлежащих преобразованию по обученным данным
-        :return: DataFrame
-        """
-    for col in col_names:
-        df[col] = le_dict[col].transform(df.astype(str).__getattr__(col))
+    Преобразование текстовых данных в числовой эквивалент по обученным категориальным признакам
+    :param df: входные данные
+    :return: DataFrame
+    """
+    for col in df.columns:
+        first = df.loc[df.index[0], col]
+        if isinstance(first, str) or first == -1:
+            df[col] = le_dict[col].transform(df.astype(str).__getattr__(col))
     return df
 
 
 def print_model_info(model, x, y):
+    """
+    Позволяет выводить в консоль все данные о качестве модели
+    (веса каждого параметра, общее качество, коэффициент детерминации, средняя абсолютная ошибка)
+    :param model: модель
+    :param x: тестовые данные x
+    :param y: тестовые данные y
+    """
     # веса
     print_with_header("Веса", model.feature_importances_)
 
