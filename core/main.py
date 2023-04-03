@@ -1,22 +1,21 @@
 # system
 import sys
 # files
-import joblib
 import pandas as pd
-from pathlib import Path
 from pandas import DataFrame
 # ui
 from PyQt5 import QtWidgets
-from core.utils import Constants
-from core.utils.FileReader import read_data_file
-from core.utils.PrintHelper import print_with_header
-from ui.MainWindow import Ui_MainWindow
 from PyQt5.QtWidgets import QFileDialog
-from sklearn.ensemble import RandomForestRegressor
+from ui.MainWindow import Ui_MainWindow
 # sklearn
 from sklearn.metrics import r2_score, mean_absolute_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+# utils
+from core.utils import Constants
+from core.utils.FileReader import read_data_file
+from core.utils.PrintHelper import print_with_header
+from core.utils.RFRModel import get_rfr_model, save_model
 # other
 
 
@@ -82,6 +81,27 @@ class MainWindow(QtWidgets.QMainWindow):
 application = MainWindow()
 
 
+def fit_model(x_trn, y_trn, x_test, y_test):
+    # Обучение модели случайного леса
+    model = get_rfr_model(Constants.MODEL_PATH)
+
+    model.fit(x_trn, y_trn)
+
+    save_model(model, Constants.MODEL_PATH)
+
+    print_model_info(model, x_test, y_test)
+
+    # Прогнозирование цехов по входным данным
+    predict = model.predict(transform_data(predict_test_data, predict_cols_name_list))
+    predict_test_data.insert(5, 'osn', int(predict))
+
+    # Вывод спрогнозированного результата в приложении
+    application.ui.l_head_text.setText(
+        f"Предсказание тест\n"
+        f"{le_dict['osn'].inverse_transform(predict_test_data['osn'])}"
+    )
+
+
 def process_data(file_name: str):
     try:
         if file_name != "":
@@ -110,50 +130,14 @@ def process_data(file_name: str):
             print_with_header("y_trn", str(DataFrame(y_trn)))
             print_with_header("y_test", str(DataFrame(y_test)))
 
-            # Обучение модели случайного леса
-            model = get_rfr_model(Constants.MODEL_PATH)
-
-            model.fit(x_trn, y_trn)
-
-            # Сохранение модели
-            joblib.dump(model, '../data/model/model_details.joblib')
-
-            # веса
-            print_with_header("Веса", model.feature_importances_)
-
-            # точность
-            print_with_header("Score", model.score(x_test, y_test).round(2))
-
-            # коэффициент детерминации
-            print_with_header("R^2", r2_score(y_test, model.predict(x_test)).round(2))
-
-            # средняя абсолютная ошибка
-            print_with_header("MAE", mean_absolute_error(y_test, model.predict(x_test)).round(2))
-
-            # Прогнозирование цехов по входным данным
-            predict = model.predict(transform_data(predict_test_data, predict_cols_name_list))
-            predict_test_data.insert(5, 'osn', int(predict))
-
-            # Вывод спрогнозированного результата в приложении
-            application.ui.l_head_text.setText(
-                f"Предсказание тест\n"
-                f"{le_dict['osn'].inverse_transform(predict_test_data['osn'])}"
+            fit_model(
+                x_trn=x_trn,
+                y_trn=y_trn,
+                x_test=x_test,
+                y_test=y_test
             )
     except KeyError as ke:
         print(ke)
-
-
-def get_rfr_model(path: str):
-    """
-    Получение обученной модели Случайного леса, если такая есть по указанному пути.
-    Иначе создается новая модель
-    :param path: путь к модели
-    :return: RandomForestRegressor
-    """
-    if Path(path).exists():
-        return joblib.load(path)
-    else:
-        return RandomForestRegressor()
 
 
 def fit_transform_data(df: DataFrame, col_names: list[str]):
@@ -181,10 +165,25 @@ def transform_data(df: DataFrame, col_names: list[str]):
     return df
 
 
+def print_model_info(model, x, y):
+    # веса
+    print_with_header("Веса", model.feature_importances_)
+
+    # точность
+    print_with_header("Качество", model.score(x, y).round(2))
+
+    # коэффициент детерминации
+    print_with_header("R^2", r2_score(y, model.predict(x)).round(2))
+
+    # средняя абсолютная ошибка
+    print_with_header("MAE", mean_absolute_error(y, model.predict(x)).round(2))
+
+
 if __name__ == "__main__":
     # Настройка вывода данных в консоль
     pd.set_option('display.max_columns', 10)
     pd.set_option('display.width', 500)
+
     # Работа с Qt приложением
     app = QtWidgets.QApplication(sys.argv)
     application.show()
