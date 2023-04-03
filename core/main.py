@@ -1,5 +1,7 @@
 # system
 import sys
+
+import numpy as np
 # files
 import pandas as pd
 from pandas import DataFrame
@@ -22,7 +24,6 @@ from art import tprint
 
 # LabelEncoder dict
 le_dict = {}
-sample_weights = [.3, .7, .7, .7, .5, 1, .3]  # todo настроить веса
 
 # README
 # На вход файлы подаются в виде массива со следующей последовательностью данных:
@@ -91,7 +92,7 @@ def process_data(file_name: str):
             print_with_header("Набор данных", str(dataset))
             print_with_header("Корреляция", str(dataset.corr(numeric_only=True)))
 
-            # Удаление идентификаторов, т.к. они не участвуют в обучении
+            # Удаление идентификаторов, т.к. он не участвуют в обучении
             if 'uid' in dataset.columns:
                 dataset = dataset.drop('uid', axis=1)
 
@@ -101,6 +102,9 @@ def process_data(file_name: str):
             # Разбиение данных на прогнозируемые и обучающие
             trg_data = dataset[['osn']].values.ravel()
             trn_data = dataset.drop('osn', axis=1)
+
+            if 'osn' in predict_test_data.columns:
+                predict_test_data.drop('osn', axis=1, inplace=True)
 
             predict_test_data.columns = trn_data.columns
 
