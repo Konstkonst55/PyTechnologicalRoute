@@ -23,14 +23,20 @@ from art import tprint
 # LabelEncoder dict
 le_dict = {}
 
-predict_cols_list = [0, 5, 6, 7]  # индексы колонок предсказуемых данных, которые нужно трансформировать
-data_cols_list = [0, 5, 6, 7, 8]  # индексы колонок данных, которые нужно трансформировать
-data_cols_name_list = ['name', 'osn', 'mark', 'spf', 'tt']  # названия колонок данных, которые нужно трансформировать
-predict_cols_name_list = ['name', 'mark', 'spf', 'tt']  # названия колонок данных, которые нужно трансформировать
+# названия колонок данных, которые нужно трансформировать
+data_cols_name_list = ['name', 'osn', 'mark', 'spf', 'tt']
+predict_cols_name_list = ['name', 'mark', 'spf', 'tt']
 
 sample_weights = [.3, .7, .7, .7, .5, 1, .3]  # todo настроить веса
 
-# out >> osn 002-053
+# README
+# На вход файлы подаются в виде массива со следующей последовательностью данных:
+# uid(необязательно) name(str) gs_x(float) gs_y(float) gs_z(float) cg(float) osn(str) mark(str) spf(str) tt(str)
+# tt - формируется из всех технических требований (для каждого uid) в одну строку (разделитель | - вертикальная черта)
+# Массив данных для обучения и прогнозирования можно загрузить в виде .csv файла, сохраненного с разделителями ';'
+# и кодировкой utf-8. В случае, если данные в полях отсутствуют, то пустые поля необходимо заменить на -1.
+
+# Тестовые данные для прогнозирования (выход osn 002-053)
 predict_test_data = DataFrame(
     [["Балка",
       261,
@@ -82,27 +88,6 @@ class MainWindow(QtWidgets.QMainWindow):
         process_data(file_name[0])  # file_name[0] - полное имя файла file_name[1] - типы файлов
 
 
-def fit_model(x_trn, y_trn, x_test, y_test):
-    # Обучение модели случайного леса
-    model = get_rfr_model(Constants.MODEL_PATH)
-
-    model.fit(x_trn, y_trn)
-
-    save_model(model, Constants.MODEL_PATH)
-
-    print_model_info(model, x_test, y_test)
-
-    # Прогнозирование цехов по входным данным
-    predict = model.predict(transform_data(predict_test_data, predict_cols_name_list))
-    predict_test_data.insert(5, 'osn', int(predict))
-
-    # Вывод спрогнозированного результата в приложении
-    application.ui.l_head_text.setText(
-        f"Предсказание тест\n"
-        f"{le_dict['osn'].inverse_transform(predict_test_data['osn'])}"
-    )
-
-
 def process_data(file_name: str):
     try:
         if file_name != "":
@@ -112,7 +97,8 @@ def process_data(file_name: str):
             print_with_header("Корреляция", str(dataset.corr(numeric_only=True)))
 
             # Удаление идентификаторов, т.к. они не участвуют в обучении
-            dataset = dataset.drop('uid', axis=1)
+            if 'uid' in dataset.columns.names:
+                dataset = dataset.drop('uid', axis=1)
 
             # Обучение кодировщика на всех входных данных и преобразование данных
             dataset = fit_transform_data(dataset, data_cols_name_list)
@@ -139,6 +125,27 @@ def process_data(file_name: str):
             )
     except KeyError as ke:
         print(ke)
+
+
+def fit_model(x_trn, y_trn, x_test, y_test):
+    # Обучение модели случайного леса
+    model = get_rfr_model(Constants.MODEL_PATH)
+
+    model.fit(x_trn, y_trn)
+
+    save_model(model, Constants.MODEL_PATH)
+
+    print_model_info(model, x_test, y_test)
+
+    # Прогнозирование цехов по входным данным
+    predict = model.predict(transform_data(predict_test_data, predict_cols_name_list))
+    predict_test_data.insert(5, 'osn', int(predict))
+
+    # Вывод спрогнозированного результата в приложении
+    application.ui.l_head_text.setText(
+        f"Предсказание тест\n"
+        f"{le_dict['osn'].inverse_transform(predict_test_data['osn'])}"
+    )
 
 
 def fit_transform_data(df: DataFrame, col_names: list[str]):

@@ -1,11 +1,9 @@
 import numpy as np
-import pandas as pd
-from pandas import DataFrame
-from sklearn.cluster import KMeans
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LinearRegression
 from gensim.models import Word2Vec
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from pandas import DataFrame
+from pandas.core.indexes.frozen import FrozenList
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import LabelEncoder
 
 
 def test_learn():
@@ -20,8 +18,12 @@ def test_learn():
     print('Predict: ', y)
 
 
-def test_transform():  # it finally worked!!!
-    data_frame = np.array(pd.read_csv("../data/dataset_details_osn_5k_col.csv", sep=";", encoding="utf-8"))
+def test_transform():
+    data_frame = np.array([['this', 'is', 'the', 'first', 'sentence', 'for', 'word2vec'],
+                           ['this', 'is', 'the', 'second', 'sentence'],
+                           ['yet', 'another', 'sentence'],
+                           ['one', 'more', 'sentence'],
+                           ['and', 'the', 'final', 'sentence']])
 
     data_frame = np.delete(data_frame, obj=0, axis=1)
 
@@ -73,5 +75,51 @@ def test_data_frame():
     print(nparr)
 
 
+def find_text_and_transform():
+    cols_name_list = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
+    le_dict = {}
+    df = DataFrame(
+        [["Балка",
+          261,
+          0,
+          0,
+          90,
+          "Д19ч",
+          "Профиль",
+          -1
+          ],
+         ["Палка",
+          262,
+          21,
+          0,
+          90,
+          "Д20",
+          "Профиль",
+          "Шероховатость поверхности указана цветом в соответствии с инструкцией 30.0011.0155.998 . "
+          "| Предельные отклонения размеров, допуски формы и расположения поверхностей - по ОСТ 1 00022-80 . "
+          "| Контроль визуальный - после анодирования . "
+          "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
+          "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
+          "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
+          "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
+          "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 . "
+          "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 . "
+          "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 . "
+          "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 ."
+          ]]
+    )
+
+    df.columns = cols_name_list
+
+    for col in df.columns:
+        first = df.loc[df.index[0], col]
+        if isinstance(first, str) or first == -1:
+            le_dict[col] = LabelEncoder()
+            df[col] = le_dict[col].fit_transform(df.astype(str).__getattr__(col))
+
+    print(df)
+    print(le_dict['mark'].inverse_transform(df['mark']))
+
+
 if __name__ == "__main__":
-    test_data_frame()
+    find_text_and_transform()
