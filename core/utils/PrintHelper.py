@@ -4,5 +4,5 @@ def print_with_header(header: str, text: str):
     :param header: заголовок
     :param text: текст
     """
-    header_accessory = "----------------"
-    print(f"{header_accessory} {header} {header_accessory} \n {text}")
+    header_accessory = "-^35"
+    print(f"{header:{header_accessory}} \n {text}")

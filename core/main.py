@@ -1,30 +1,30 @@
 # system
+import asyncio
 import os
 import sys
 import time
-from datetime import datetime
-
-import numpy as np
 # files
 import pandas as pd
-from tqdm import tqdm
 from pandas import DataFrame
 # ui
+from art import tprint
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtCore import QRegExp
+from sklearn.ensemble import RandomForestRegressor
+
 from ui.MainWindow import MainWindowUi
+from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QLineEdit
 # sklearn
-from sklearn.metrics import r2_score, mean_absolute_error
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score, mean_absolute_error
 # utils
 from core.utils import Constants
+from core.utils.Validator import is_float
 from core.utils.FileReader import read_data_file
 from core.utils.PrintHelper import print_with_header
 from core.utils.RFRModel import get_rfr_model, save_model
-# other
-from art import tprint
-
 
 # LabelEncoder dict
 le_dict = {}
@@ -61,9 +61,6 @@ predict_test_data = DataFrame(
       ]]
 )
 
-# todo сделать интерфейс ввода
-# todo добавить автоматическое определение текстовых столбцов
-
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -76,6 +73,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def init_ui(self):
         self.setFixedSize(580, 440)
+        # Установка ограничений для текстового ввода
+        reg_ex = QRegExp("[0-9]+.?[0-9]{,2}")
+        self.ui.le_gsy.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsy))
+        self.ui.le_gsx.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsx))
+        self.ui.le_cg.setValidator(QRegExpValidator(reg_ex, self.ui.le_cg))
+        self.ui.le_gsz.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsz))
         # Установка методов для кнопок
         self.ui.b_learn_open.clicked.connect(self.pick_file)
         self.ui.b_info.clicked.connect(show_info)
@@ -84,10 +87,19 @@ class MainWindow(QtWidgets.QMainWindow):
     def predict(self):
         try:
             print(len(self.rfp_model.estimators_))
+
+            if not self.field_is_filled():
+                show_message("Заполните все поля!")
+                return
+
+            if not self.field_is_valid():
+                show_message("Проверьте поля!")
+                return
+
+            predict_df = predict_osn(self.rfp_model, self.get_predict_data_from_le())
+            print(le_dict['osn'].inverse_transform(predict_df.astype(int).__getattr__("osn")))
         except AttributeError:
-            qmb = QMessageBox()
-            qmb.setText("Сначала необходимо обучить модель")
-            qmb.exec()
+            show_message("Сначала необходимо обучить модель")
 
     def pick_file(self):
         file_dialog = QFileDialog()
@@ -98,20 +110,48 @@ class MainWindow(QtWidgets.QMainWindow):
             directory=Constants.FILE_EXPL_START_PATH,
             filter=Constants.FILE_EXPL_TYPES)
 
-        self.rfp_model = process_data(file_name[0])  # file_name[0] - полное имя файла file_name[1] - типы файлов
+        tprint("TR")
+
+        self.rfp_model = asyncio.run(process_data(file_name[0]))  # file_name[0] - полное имя файла file_name[1] - типы
 
         if file_name[0] != "":
-            tprint("TR")
-            qmb = QMessageBox()
-            qmb.setText("Модель успешно обучена и сохранена!")
-            qmb.exec()
+            show_message("Модель успешно обучена и сохранена!")
             self.ui.pb_fit_progress.setValue(0)
+
+    def field_is_filled(self) -> bool:
+        line_edits = self.findChildren(QLineEdit)
+        for le in line_edits:
+            if le.text() == "":
+                return False
+        return True
+
+    def field_is_valid(self) -> bool:
+        return is_float(self.ui.le_gsy.text()) \
+            and is_float(self.ui.le_gsx.text()) \
+            and is_float(self.ui.le_gsz.text()) \
+            and is_float(self.ui.le_cg.text())
+
+    def get_predict_data_from_le(self) -> DataFrame:
+        return DataFrame(
+            [[self.ui.le_name.text(),
+              float(self.ui.le_gsx.text()),
+              float(self.ui.le_gsy.text()),
+              float(self.ui.le_gsz.text()),
+              float(self.ui.le_cg.text()),
+              self.ui.le_mark.text(),
+              self.ui.le_spf.text(),
+              self.ui.le_tt.toPlainText()]]
+        )
+
+
+def show_message(text: str):
+    msg = QMessageBox()
+    msg.setText(text)
+    msg.exec()
 
 
 def show_info():
-    qmb = QMessageBox()
-    qmb.setText(Constants.INFO_TEXT)
-    qmb.exec()
+    show_message(Constants.INFO_TEXT)
 
 
 def predict_osn(model, data: DataFrame):
@@ -121,14 +161,10 @@ def predict_osn(model, data: DataFrame):
     predict = model.predict(transform_data(data))
     data.insert(5, 'osn', predict)
 
-    # Вывод спрогнозированного результата в приложении
-    application.ui.tb_output.setPlainText(
-        f"Основные цеха:\n"
-        f"{le_dict['osn'].inverse_transform(data['osn'])}"
-    )
+    return data
 
 
-def process_data(file_name: str):
+async def process_data(file_name: str) -> RandomForestRegressor:
     try:
         if file_name != "":
             print_with_header("Входной файл", file_name)
@@ -155,7 +191,7 @@ def process_data(file_name: str):
             print_with_header("y_trn", str(DataFrame(y_trn)))
             print_with_header("y_test", str(DataFrame(y_test)))
 
-            return fit_model(
+            return await fit_model(
                 x_trn=x_trn,
                 y_trn=y_trn,
                 x_test=x_test,
@@ -164,12 +200,10 @@ def process_data(file_name: str):
         else:
             return get_rfr_model(Constants.LOAD_MODEL_PATH)
     except KeyError:
-        qmb = QMessageBox()
-        qmb.setText("Проверьте входной файл!")
-        qmb.exec()
+        show_message("Проверьте входной файл!")
 
 
-def fit_model(x_trn, y_trn, x_test, y_test):
+async def fit_model(x_trn, y_trn, x_test, y_test) -> RandomForestRegressor:
     # Обучение модели случайного леса
     model = get_rfr_model(Constants.LOAD_MODEL_PATH)
 
