@@ -11,43 +11,270 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(584, 446)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.b_file_open = QtWidgets.QPushButton(self.centralwidget)
-        self.b_file_open.setGeometry(QtCore.QRect(10, 10, 561, 31))
-        self.b_file_open.setObjectName("b_file_open")
-        self.l_head_text = QtWidgets.QLabel(self.centralwidget)
-        self.l_head_text.setGeometry(QtCore.QRect(10, 50, 561, 341))
-        self.l_head_text.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.l_head_text.setFrameShape(QtWidgets.QFrame.Panel)
-        self.l_head_text.setLineWidth(1)
-        self.l_head_text.setScaledContents(False)
-        self.l_head_text.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.l_head_text.setWordWrap(False)
-        self.l_head_text.setObjectName("l_head_text")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 584, 26))
-        self.menubar.setObjectName("menubar")
-        self.menu = QtWidgets.QMenu(self.menubar)
-        self.menu.setObjectName("menu")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.menubar.addAction(self.menu.menuAction())
-        MainWindow.setWindowTitle("Файл")
-        MainWindow.setFixedSize(584, 446)
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+class MainWindowUi(object):
+    def setup_ui(self, main_window):
+        main_window.setObjectName("main_window")
+        main_window.resize(581, 440)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(main_window.sizePolicy().hasHeightForWidth())
+        main_window.setSizePolicy(sizePolicy)
+        self.central = QtWidgets.QWidget(main_window)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.central.sizePolicy().hasHeightForWidth())
+        self.central.setSizePolicy(sizePolicy)
+        self.central.setObjectName("central")
+        self.tabs = QtWidgets.QTabWidget(self.central)
+        self.tabs.setGeometry(QtCore.QRect(0, 0, 580, 440))
+        self.tabs.setStyleSheet("\n"
+                                "border: 0px solid black;\n"
+                                "")
+        self.tabs.setTabShape(QtWidgets.QTabWidget.Rounded)
+        self.tabs.setElideMode(QtCore.Qt.ElideNone)
+        self.tabs.setUsesScrollButtons(True)
+        self.tabs.setDocumentMode(False)
+        self.tabs.setTabsClosable(False)
+        self.tabs.setMovable(True)
+        self.tabs.setTabBarAutoHide(True)
+        self.tabs.setObjectName("tabs")
+        self.tab_osn = QtWidgets.QWidget()
+        self.tab_osn.setObjectName("tab_osn")
+        self.tb_output = QtWidgets.QPlainTextEdit(self.tab_osn)
+        self.tb_output.setEnabled(True)
+        self.tb_output.setGeometry(QtCore.QRect(10, 311, 561, 71))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tb_output.sizePolicy().hasHeightForWidth())
+        self.tb_output.setSizePolicy(sizePolicy)
+        self.tb_output.setStyleSheet("border-radius: 5px;\n"
+                                     "border: 1px solid  rgb(155, 241, 56);\n"
+                                     "color: black;\n"
+                                     "")
+        self.tb_output.setReadOnly(True)
+        self.tb_output.setPlainText("")
+        self.tb_output.setObjectName("tb_output")
+        self.l_info_tr = QtWidgets.QLabel(self.tab_osn)
+        self.l_info_tr.setGeometry(QtCore.QRect(520, 10, 54, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.l_info_tr.sizePolicy().hasHeightForWidth())
+        self.l_info_tr.setSizePolicy(sizePolicy)
+        self.l_info_tr.setAcceptDrops(False)
+        self.l_info_tr.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.l_info_tr.setStyleSheet("border-radius: 5px;\n"
+                                     "border: 1px solid #2B2A29;\n"
+                                     "color: black;\n"
+                                     "")
+        self.l_info_tr.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.l_info_tr.setObjectName("l_info_tr")
+        self.b_predict_open = QtWidgets.QPushButton(self.tab_osn)
+        self.b_predict_open.setGeometry(QtCore.QRect(220, 10, 251, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.b_predict_open.sizePolicy().hasHeightForWidth())
+        self.b_predict_open.setSizePolicy(sizePolicy)
+        self.b_predict_open.setStyleSheet("QPushButton{\n"
+                                          "border-radius: 5px;\n"
+                                          "border: 1px solid #2B2A29;\n"
+                                          "color: black;\n"
+                                          "}\n"
+                                          "\n"
+                                          "QPushButton:hover{\n"
+                                          "background: solid #625B71;\n"
+                                          "color: white;\n"
+                                          "}")
+        self.b_predict_open.setObjectName("b_predict_open")
+        self.b_learn_open = QtWidgets.QPushButton(self.tab_osn)
+        self.b_learn_open.setGeometry(QtCore.QRect(10, 10, 201, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.b_learn_open.sizePolicy().hasHeightForWidth())
+        self.b_learn_open.setSizePolicy(sizePolicy)
+        self.b_learn_open.setStyleSheet("QPushButton{\n"
+                                        "border-radius: 5px;\n"
+                                        "border: 1px solid #2B2A29;\n"
+                                        "color: black;\n"
+                                        "}\n"
+                                        "\n"
+                                        "QPushButton:hover{\n"
+                                        "background: solid #625B71;\n"
+                                        "color: white;\n"
+                                        "}")
+        self.b_learn_open.setObjectName("b_learn_open")
+        self.b_info = QtWidgets.QToolButton(self.tab_osn)
+        self.b_info.setGeometry(QtCore.QRect(480, 10, 27, 31))
+        self.b_info.setStyleSheet("border-radius: 5px;\n"
+                                  "border: 1px solid #2B2A29;\n"
+                                  "color: black;\n"
+                                  "")
+        self.b_info.setObjectName("b_info")
+        self.pb_fit_progress = QtWidgets.QProgressBar(self.tab_osn)
+        self.pb_fit_progress.setGeometry(QtCore.QRect(10, 390, 561, 23))
+        self.pb_fit_progress.setStyleSheet("border-radius: 5px;\n"
+                                           "border: 1px solid  rgb(155, 241, 56);\n"
+                                           "color: black;\n"
+                                           "")
+        self.pb_fit_progress.setProperty("value", 0)
+        self.pb_fit_progress.setAlignment(QtCore.Qt.AlignCenter)
+        self.pb_fit_progress.setObjectName("pb_fit_progress")
+        self.le_name = QtWidgets.QLineEdit(self.tab_osn)
+        self.le_name.setGeometry(QtCore.QRect(10, 70, 211, 22))
+        self.le_name.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                   "border-radius: 5px;\n"
+                                   "background: #D1D2FD solid;\n"
+                                   "color: #2B2A29;\n"
+                                   "")
+        self.le_name.setObjectName("le_name")
+        self.l_name = QtWidgets.QLabel(self.tab_osn)
+        self.l_name.setGeometry(QtCore.QRect(10, 50, 55, 16))
+        self.l_name.setObjectName("l_name")
+        self.le_gsx = QtWidgets.QLineEdit(self.tab_osn)
+        self.le_gsx.setGeometry(QtCore.QRect(230, 70, 81, 22))
+        self.le_gsx.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
+        self.le_gsx.setObjectName("le_gsx")
+        self.le_gsy = QtWidgets.QLineEdit(self.tab_osn)
+        self.le_gsy.setGeometry(QtCore.QRect(320, 70, 81, 22))
+        self.le_gsy.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
+        self.le_gsy.setObjectName("le_gsy")
+        self.le_gsz = QtWidgets.QLineEdit(self.tab_osn)
+        self.le_gsz.setGeometry(QtCore.QRect(410, 70, 81, 22))
+        self.le_gsz.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
+        self.le_gsz.setObjectName("le_gsz")
+        self.l_gsx = QtWidgets.QLabel(self.tab_osn)
+        self.l_gsx.setGeometry(QtCore.QRect(230, 50, 55, 16))
+        self.l_gsx.setObjectName("l_gsx")
+        self.l_gsy = QtWidgets.QLabel(self.tab_osn)
+        self.l_gsy.setGeometry(QtCore.QRect(320, 50, 55, 16))
+        self.l_gsy.setObjectName("l_gsy")
+        self.l_gsz = QtWidgets.QLabel(self.tab_osn)
+        self.l_gsz.setGeometry(QtCore.QRect(410, 50, 55, 16))
+        self.l_gsz.setObjectName("l_gsz")
+        self.le_cg = QtWidgets.QLineEdit(self.tab_osn)
+        self.le_cg.setGeometry(QtCore.QRect(500, 70, 71, 22))
+        self.le_cg.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                 "border-radius: 5px;\n"
+                                 "background: #D1D2FD solid;\n"
+                                 "color: #2B2A29;\n"
+                                 "")
+        self.le_cg.setObjectName("le_cg")
+        self.l_cg = QtWidgets.QLabel(self.tab_osn)
+        self.l_cg.setGeometry(QtCore.QRect(500, 50, 55, 16))
+        self.l_cg.setObjectName("l_cg")
+        self.le_mark = QtWidgets.QLineEdit(self.tab_osn)
+        self.le_mark.setGeometry(QtCore.QRect(60, 104, 511, 22))
+        self.le_mark.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                   "border-radius: 5px;\n"
+                                   "background: #D1D2FD solid;\n"
+                                   "color: #2B2A29;\n"
+                                   "")
+        self.le_mark.setObjectName("le_mark")
+        self.l_mark = QtWidgets.QLabel(self.tab_osn)
+        self.l_mark.setGeometry(QtCore.QRect(10, 105, 41, 21))
+        self.l_mark.setObjectName("l_mark")
+        self.le_spf = QtWidgets.QLineEdit(self.tab_osn)
+        self.le_spf.setGeometry(QtCore.QRect(60, 140, 511, 22))
+        self.le_spf.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
+        self.le_spf.setObjectName("le_spf")
+        self.l_spf = QtWidgets.QLabel(self.tab_osn)
+        self.l_spf.setGeometry(QtCore.QRect(10, 140, 41, 21))
+        self.l_spf.setObjectName("l_spf")
+        self.l_tt = QtWidgets.QLabel(self.tab_osn)
+        self.l_tt.setGeometry(QtCore.QRect(10, 180, 41, 21))
+        self.l_tt.setObjectName("l_tt")
+        self.l_out = QtWidgets.QLabel(self.tab_osn)
+        self.l_out.setGeometry(QtCore.QRect(10, 290, 55, 16))
+        self.l_out.setObjectName("l_out")
+        self.le_tt = QtWidgets.QPlainTextEdit(self.tab_osn)
+        self.le_tt.setGeometry(QtCore.QRect(60, 180, 511, 71))
+        self.le_tt.setStyleSheet("border: 1px solid #8F8FB0;\n"
+                                 "border-radius: 5px;\n"
+                                 "background: #D1D2FD solid;\n"
+                                 "color: #2B2A29;\n"
+                                 "")
+        self.le_tt.setObjectName("le_tt")
+        self.top_line = QtWidgets.QFrame(self.tab_osn)
+        self.top_line.setGeometry(QtCore.QRect(0, 47, 581, 1))
+        self.top_line.setStyleSheet("background: #2B2A29;")
+        self.top_line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.top_line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.top_line.setObjectName("top_line")
+        self.bottom_line = QtWidgets.QFrame(self.tab_osn)
+        self.bottom_line.setGeometry(QtCore.QRect(60, 298, 509, 1))
+        self.bottom_line.setStyleSheet("background: #2B2A29;")
+        self.bottom_line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.bottom_line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.bottom_line.setObjectName("bottom_line")
+        self.b_ready = QtWidgets.QPushButton(self.tab_osn)
+        self.b_ready.setGeometry(QtCore.QRect(420, 260, 151, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.b_ready.sizePolicy().hasHeightForWidth())
+        self.b_ready.setSizePolicy(sizePolicy)
+        self.b_ready.setStyleSheet("QPushButton{\n"
+                                   "border-radius: 5px;\n"
+                                   "border: 1px solid #2B2A29;\n"
+                                   "color: black;\n"
+                                   "}\n"
+                                   "\n"
+                                   "QPushButton:hover{\n"
+                                   "background: solid #625B71;\n"
+                                   "color: white;\n"
+                                   "}")
+        self.b_ready.setObjectName("b_ready")
+        self.tabs.addTab(self.tab_osn, "")
+        self.tab_usl = QtWidgets.QWidget()
+        self.tab_usl.setObjectName("tab_usl")
+        self.tabs.addTab(self.tab_usl, "")
+        main_window.setCentralWidget(self.central)
+        self.usl = QtWidgets.QAction(main_window)
+        self.usl.setObjectName("usl")
 
-    def retranslateUi(self, MainWindow):
+        self.retranslate_ui(main_window)
+        self.tabs.setCurrentIndex(0)
+        QtCore.QMetaObject.connectSlotsByName(main_window)
+
+    def retranslate_ui(self, main_window):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.b_file_open.setText(_translate("MainWindow", "Open file"))
-        self.l_head_text.setText(_translate("MainWindow", "<html><head/><body><p><br/></p></body></html>"))
-        self.menu.setTitle(_translate("MainWindow", "Меню"))
+        main_window.setWindowTitle(_translate("main_window", "MainWindow"))
+        self.l_info_tr.setToolTip(_translate("main_window", "Время обучения"))
+        self.l_info_tr.setText(_translate("main_window", "0"))
+        self.b_predict_open.setText(_translate("main_window", "Выбрать данные для прогнозирования"))
+        self.b_learn_open.setText(_translate("main_window", "Выбрать данные для обучения"))
+        self.b_info.setText(_translate("main_window", "..."))
+        self.l_name.setText(_translate("main_window", "name"))
+        self.l_gsx.setText(_translate("main_window", "gs_x"))
+        self.l_gsy.setText(_translate("main_window", "gs_y"))
+        self.l_gsz.setText(_translate("main_window", "gs_z"))
+        self.l_cg.setText(_translate("main_window", "cg"))
+        self.l_mark.setText(_translate("main_window", "mark"))
+        self.l_spf.setText(_translate("main_window", "spf"))
+        self.l_tt.setText(_translate("main_window", "tt"))
+        self.l_out.setText(_translate("main_window", "output"))
+        self.b_ready.setText(_translate("main_window", "Готово"))
+        self.tabs.setTabText(self.tabs.indexOf(self.tab_osn), _translate("main_window", "osn"))
+        self.tabs.setTabText(self.tabs.indexOf(self.tab_usl), _translate("main_window", "usl"))
+        self.usl.setText(_translate("main_window", "usl"))
