@@ -35,6 +35,9 @@
       <height>440</height>
      </rect>
     </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
+    </property>
     <property name="styleSheet">
      <string notr="true">
 border: 0px solid black;
@@ -121,7 +124,7 @@ color: black;
        <string>Информация</string>
       </property>
       <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
+       <enum>Qt::RightToLeft</enum>
       </property>
       <property name="styleSheet">
        <string notr="true">border-radius: 5px;

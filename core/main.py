@@ -10,8 +10,6 @@ from pandas import DataFrame
 from art import tprint
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRegExp
-from sklearn.ensemble import RandomForestRegressor
-
 from ui.MainWindow import MainWindowUi
 from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QLineEdit
@@ -62,6 +60,10 @@ predict_test_data = DataFrame(
 )
 
 
+# todo добавить комбобоксы
+# todo дописать док
+
+
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -80,7 +82,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.le_cg.setValidator(QRegExpValidator(reg_ex, self.ui.le_cg))
         self.ui.le_gsz.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsz))
         # Установка методов для кнопок
-        self.ui.b_learn_open.clicked.connect(self.pick_file)
+        self.ui.b_learn_open.clicked.connect(self.pick_learn_file)
         self.ui.b_info.clicked.connect(show_info)
         self.ui.b_ready.clicked.connect(self.predict)
 
@@ -97,11 +99,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
 
             predict_df = predict_osn(self.rfp_model, self.get_predict_data_from_le())
-            print(le_dict['osn'].inverse_transform(predict_df.astype(int).__getattr__("osn")))
+            self.ui.tb_output.setPlainText(
+                str(le_dict['osn'].inverse_transform(predict_df.astype(int).__getattr__('osn')))
+            )
         except AttributeError:
             show_message("Сначала необходимо обучить модель")
+        except KeyError as ke:
+            self.ui.tb_output.setPlainText(f"le_dict не содержит данных для {str(ke)}")
+        except ValueError as ve:
+            self.ui.tb_output.setPlainText(f"le_dict не содержит данных для {str(ve)}")
 
-    def pick_file(self):
+    def pick_learn_file(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.ExistingFile)
         file_name = file_dialog.getOpenFileName(
@@ -112,11 +120,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         tprint("TR")
 
-        self.rfp_model = asyncio.run(process_data(file_name[0]))  # file_name[0] - полное имя файла file_name[1] - типы
-
         if file_name[0] != "":
+            x_trn, x_test, y_trn, y_test = asyncio.run(process_data(file_name[0]))
+            self.rfp_model = asyncio.run(fit_model(x_trn, y_trn, x_test, y_test))
+
             show_message("Модель успешно обучена и сохранена!")
             self.ui.pb_fit_progress.setValue(0)
+        else:
+            self.rfp_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
 
     def field_is_filled(self) -> bool:
         line_edits = self.findChildren(QLineEdit)
@@ -157,54 +168,54 @@ def show_info():
 def predict_osn(model, data: DataFrame):
     data.columns = df_columns
 
-    # Прогнозирование цехов по входным данным
-    predict = model.predict(transform_data(data))
-    data.insert(5, 'osn', predict)
+    try:
+        # Прогнозирование цехов по входным данным
+        predict = model.predict(transform_data(data))
+        data.insert(5, 'osn', predict)
+    except ValueError as ve:
+        application.ui.tb_output.setPlainText(str(ve))
 
     return data
 
 
-async def process_data(file_name: str) -> RandomForestRegressor:
+async def process_data(file_name: str):
+    """
+    Предназначена для преобразования входных данных по наименованию файла
+    :param file_name: входной путь до файла .csv или .json
+    :return: x_trn, x_test, y_trn, y_test
+    """
     try:
-        if file_name != "":
-            print_with_header("Входной файл", file_name)
-            dataset = read_data_file(file_name)
-            print_with_header("Набор данных", str(dataset))
-            print_with_header("Корреляция", str(dataset.corr(numeric_only=True)))
+        print_with_header("Входной файл", file_name)
+        dataset = read_data_file(file_name)
+        print_with_header("Набор данных", str(dataset))
+        print_with_header("Корреляция", str(dataset.corr(numeric_only=True)))
 
-            # Удаление идентификаторов, т.к. он не участвуют в обучении
-            if 'uid' in dataset.columns:
-                dataset = dataset.drop('uid', axis=1)
+        # Удаление идентификаторов, т.к. он не участвуют в обучении
+        if 'uid' in dataset.columns:
+            dataset = dataset.drop('uid', axis=1)
 
-            # Обучение кодировщика на всех входных данных и преобразование данных
-            dataset = fit_transform_data(dataset)
+        # Обучение кодировщика на всех входных данных и преобразование данных
+        dataset = fit_transform_data(dataset)
 
-            # Разбиение данных на прогнозируемые и обучающие
-            trg_data = dataset[['osn']].values.ravel()
-            trn_data = dataset.drop('osn', axis=1)
+        # Разбиение данных на прогнозируемые и обучающие
+        trg_data = dataset[['osn']].values.ravel()
+        trn_data = dataset.drop('osn', axis=1)
 
-            # Разбиение данных на две выборки - тестовая и обучающая
-            x_trn, x_test, y_trn, y_test = train_test_split(trn_data, trg_data, test_size=0.1)
-
-            print_with_header("x_trn", str(DataFrame(x_trn)))
-            print_with_header("x_test", str(DataFrame(x_test)))
-            print_with_header("y_trn", str(DataFrame(y_trn)))
-            print_with_header("y_test", str(DataFrame(y_test)))
-
-            return await fit_model(
-                x_trn=x_trn,
-                y_trn=y_trn,
-                x_test=x_test,
-                y_test=y_test
-            )
-        else:
-            return get_rfr_model(Constants.LOAD_MODEL_PATH)
+        # Разбиение данных на две выборки - тестовая и обучающая
+        return train_test_split(trn_data, trg_data, test_size=0.1)
     except KeyError:
         show_message("Проверьте входной файл!")
 
 
-async def fit_model(x_trn, y_trn, x_test, y_test) -> RandomForestRegressor:
-    # Обучение модели случайного леса
+async def fit_model(x_trn, y_trn, x_test, y_test):
+    """
+    Предназначена для обучения модели случайного леса
+    :param x_trn: входная выборка тренировочных данных
+    :param y_trn: входная выборка тренировочных данных
+    :param x_test: входная выборка тестовых данных
+    :param y_test: входная выборка тестовых данных
+    :return: RandomForestRegressor
+    """
     model = get_rfr_model(Constants.LOAD_MODEL_PATH)
 
     application.ui.pb_fit_progress.setValue(24)
@@ -244,11 +255,16 @@ def transform_data(df: DataFrame):
     :param df: входные данные
     :return: DataFrame
     """
-    for col in df.columns:
-        first = df.loc[df.index[0], col]
-        if isinstance(first, str) or first == -1:
-            df[col] = le_dict[col].transform(df.astype(str).__getattr__(col))
-    return df
+    try:
+        for col in df.columns:
+            first = df.loc[df.index[0], col]
+            if isinstance(first, str) or first == -1:
+                df[col] = le_dict[col].transform(df.astype(str).__getattr__(col))
+        return df
+    except ValueError as ve:
+        application.ui.tb_output.setPlainText(str(ve))
+    except KeyError as ke:
+        application.ui.tb_output.setPlainText(str(ke))
 
 
 def print_model_info(model, x, y):
