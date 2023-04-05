@@ -1,11 +1,27 @@
 from pathlib import Path
 
 import pandas as pd
+from PyQt5.QtWidgets import QFileDialog
+
+from core.utils import Constants
 
 file_types_dict = {
     ".csv": pd.read_csv,
     ".json": pd.read_json
 }
+
+
+def pick_file() -> str:
+    """
+    Открывает проводник для выбора файла пользователем
+    :return: полный путь до выбранного файла
+    """
+    file_dialog = QFileDialog()
+    file_dialog.setFileMode(QFileDialog.ExistingFile)
+    return file_dialog.getOpenFileName(
+        caption=Constants.FILE_EXPL_HEADER,
+        directory=Constants.FILE_EXPL_START_PATH,
+        filter=Constants.FILE_EXPL_TYPES)[0]
 
 
 def read_data_file(file_name: str):

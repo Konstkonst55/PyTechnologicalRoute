@@ -1,32 +1,27 @@
-# system
-import asyncio
+
 import os
 import sys
-import time
-# files
+import asyncio
 import pandas as pd
-from pandas import DataFrame
-# ui
 from art import tprint
 from PyQt5 import QtWidgets
+from pandas import DataFrame
 from PyQt5.QtCore import QRegExp
+from core.utils import Constants
+from PyQt5.QtWidgets import QLineEdit
 from ui.MainWindow import MainWindowUi
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QLineEdit
-# sklearn
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_absolute_error
-# utils
-from core.utils import Constants
-from core.utils.Validator import is_float
-from core.utils.FileReader import read_data_file
-from core.utils.PrintHelper import print_with_header
-from core.utils.RFRModel import get_rfr_model, save_model
+from core.utils.FileReader import pick_file
+from core.utils.RFRModel import get_rfr_model
+from core.utils.MessageDisplayer import show_message
+from core.processors.DataProcessor import DataProcessor
+from core.processors.ModelProcessor import ModelProcessor
+from core.utils.Validator import field_is_filled, values_is_float
 
 # LabelEncoder dict
-le_dict = {}
 df_columns = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
+osn_col_name = 'osn'
+usl_col_name = 'usl'
 save_model_path = os.path.join(os.path.dirname(__file__), Constants.SAVE_MODEL_PATH)
 
 # README
@@ -60,14 +55,14 @@ predict_test_data = DataFrame(
 )
 
 
-# todo добавить комбобоксы
-# todo дописать док
+# todo добавить ComboBox для текстовых данных из DataProcessor.le_dict
 
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.rfp_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
+        self.model_processor = ModelProcessor(get_rfr_model(Constants.LOAD_MODEL_PATH))
+        self.data_processor = DataProcessor()
         self.ui = MainWindowUi()
         self.ui.setup_ui(self)
         self.init_ui()
@@ -81,68 +76,81 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.le_gsx.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsx))
         self.ui.le_cg.setValidator(QRegExpValidator(reg_ex, self.ui.le_cg))
         self.ui.le_gsz.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsz))
+
         # Установка методов для кнопок
-        self.ui.b_learn_open.clicked.connect(self.pick_learn_file)
-        self.ui.b_info.clicked.connect(show_info)
-        self.ui.b_ready.clicked.connect(self.predict)
+        self.ui.b_learn_open.clicked.connect(self.learn_open_click)
+        self.ui.b_info.clicked.connect(self.show_info_click)
+        self.ui.b_ready.clicked.connect(self.predict_click)
+        self.ui.b_predict_open.clicked.connect(self.predict_open_click)
 
-    def predict(self):
+    # функция нажатия на кнопку b_info
+    @staticmethod
+    def show_info_click():
+        show_message(Constants.INFO_TEXT)
+
+    # функция нажатия на кнопку b_ready
+    def predict_click(self):
         try:
-            print(len(self.rfp_model.estimators_))
+            print(len(self.model_processor.rfr_model.estimators_))
 
-            if not self.field_is_filled():
+            if not field_is_filled(self.findChildren(QLineEdit)):
                 show_message("Заполните все поля!")
                 return
 
-            if not self.field_is_valid():
+            field_value_list = [
+                self.ui.le_gsy.text(),
+                self.ui.le_gsx.text(),
+                self.ui.le_gsz.text(),
+                self.ui.le_cg.text()
+            ]
+
+            if not values_is_float(field_value_list):
                 show_message("Проверьте поля!")
                 return
 
-            predict_df = predict_osn(self.rfp_model, self.get_predict_data_from_le())
-            self.ui.tb_output.setPlainText(
-                str(le_dict['osn'].inverse_transform(predict_df.astype(int).__getattr__('osn')))
+            predict_df = self.model_processor.predict_data(
+                self.get_predict_data_from_le(),
+                osn_col_name,
+                self.data_processor
             )
-        except AttributeError:
-            show_message("Сначала необходимо обучить модель")
-        except KeyError as ke:
-            self.ui.tb_output.setPlainText(f"le_dict не содержит данных для {str(ke)}")
-        except ValueError as ve:
-            self.ui.tb_output.setPlainText(f"le_dict не содержит данных для {str(ve)}")
 
-    def pick_learn_file(self):
-        file_dialog = QFileDialog()
-        file_dialog.setFileMode(QFileDialog.ExistingFile)
-        file_name = file_dialog.getOpenFileName(
-            self,
-            caption=Constants.FILE_EXPL_HEADER,
-            directory=Constants.FILE_EXPL_START_PATH,
-            filter=Constants.FILE_EXPL_TYPES)
+            self.ui.tb_output.setPlainText(
+                str(self.data_processor.le_dict[osn_col_name]
+                    .inverse_transform(
+                        predict_df.astype(int).__getattr__(osn_col_name))
+                    )
+            )
+
+        except AttributeError:
+            show_message("Проверьте входной файл")
+        except KeyError as ke:
+            self.ui.tb_output.setPlainText(str(ke))
+        except ValueError as ve:
+            self.ui.tb_output.setPlainText(str(ve))
+
+    # функция нажатия на кнопку b_learn_open
+    def learn_open_click(self):
+        file_name = pick_file()
 
         tprint("TR")
 
-        if file_name[0] != "":
-            x_trn, x_test, y_trn, y_test = asyncio.run(process_data(file_name[0]))
-            self.rfp_model = asyncio.run(fit_model(x_trn, y_trn, x_test, y_test))
+        if file_name != "":
+            x_trn, x_test, y_trn, y_test = asyncio.run(self.data_processor.process_data(file_name, osn_col_name))
+            asyncio.run(self.model_processor.fit_model(x_trn, y_trn, x_test, y_test))
 
             show_message("Модель успешно обучена и сохранена!")
             self.ui.pb_fit_progress.setValue(0)
         else:
-            self.rfp_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
+            self.model_processor.rfr_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
 
-    def field_is_filled(self) -> bool:
-        line_edits = self.findChildren(QLineEdit)
-        for le in line_edits:
-            if le.text() == "":
-                return False
-        return True
-
-    def field_is_valid(self) -> bool:
-        return is_float(self.ui.le_gsy.text()) \
-            and is_float(self.ui.le_gsx.text()) \
-            and is_float(self.ui.le_gsz.text()) \
-            and is_float(self.ui.le_cg.text())
+    def predict_open_click(self):
+        pass
 
     def get_predict_data_from_le(self) -> DataFrame:
+        """
+        Возвращает данные, введенные пользователем
+        :return: возвращает данные с основными колонками, собранные из QLineEdit
+        """
         return DataFrame(
             [[self.ui.le_name.text(),
               float(self.ui.le_gsx.text()),
@@ -151,141 +159,9 @@ class MainWindow(QtWidgets.QMainWindow):
               float(self.ui.le_cg.text()),
               self.ui.le_mark.text(),
               self.ui.le_spf.text(),
-              self.ui.le_tt.toPlainText()]]
+              self.ui.le_tt.toPlainText()]],
+            columns=df_columns
         )
-
-
-def show_message(text: str):
-    msg = QMessageBox()
-    msg.setText(text)
-    msg.exec()
-
-
-def show_info():
-    show_message(Constants.INFO_TEXT)
-
-
-def predict_osn(model, data: DataFrame):
-    data.columns = df_columns
-
-    try:
-        # Прогнозирование цехов по входным данным
-        predict = model.predict(transform_data(data))
-        data.insert(5, 'osn', predict)
-    except ValueError as ve:
-        application.ui.tb_output.setPlainText(str(ve))
-
-    return data
-
-
-async def process_data(file_name: str):
-    """
-    Предназначена для преобразования входных данных по наименованию файла
-    :param file_name: входной путь до файла .csv или .json
-    :return: x_trn, x_test, y_trn, y_test
-    """
-    try:
-        print_with_header("Входной файл", file_name)
-        dataset = read_data_file(file_name)
-        print_with_header("Набор данных", str(dataset))
-        print_with_header("Корреляция", str(dataset.corr(numeric_only=True)))
-
-        # Удаление идентификаторов, т.к. он не участвуют в обучении
-        if 'uid' in dataset.columns:
-            dataset = dataset.drop('uid', axis=1)
-
-        # Обучение кодировщика на всех входных данных и преобразование данных
-        dataset = fit_transform_data(dataset)
-
-        # Разбиение данных на прогнозируемые и обучающие
-        trg_data = dataset[['osn']].values.ravel()
-        trn_data = dataset.drop('osn', axis=1)
-
-        # Разбиение данных на две выборки - тестовая и обучающая
-        return train_test_split(trn_data, trg_data, test_size=0.1)
-    except KeyError:
-        show_message("Проверьте входной файл!")
-
-
-async def fit_model(x_trn, y_trn, x_test, y_test):
-    """
-    Предназначена для обучения модели случайного леса
-    :param x_trn: входная выборка тренировочных данных
-    :param y_trn: входная выборка тренировочных данных
-    :param x_test: входная выборка тестовых данных
-    :param y_test: входная выборка тестовых данных
-    :return: RandomForestRegressor
-    """
-    model = get_rfr_model(Constants.LOAD_MODEL_PATH)
-
-    application.ui.pb_fit_progress.setValue(24)
-    start_fit_time = time.time()
-
-    model.fit(x_trn, y_trn)
-
-    end_fit_time = time.time()
-    elapsed_fit_time = end_fit_time - start_fit_time
-    application.ui.l_info_tr.setText(f"{elapsed_fit_time:.2f}c")
-    application.ui.pb_fit_progress.setValue(100)
-
-    save_model(model, Constants.SAVE_MODEL_PATH)
-
-    print_model_info(model, x_test, y_test)
-
-    return model
-
-
-def fit_transform_data(df: DataFrame):
-    """
-    Обучение и преобразование текстовых данных в числовой эквивалент по категориальным признакам
-    :param df: входные данные
-    :return: DataFrame
-    """
-    for col in df.columns:
-        first = df.loc[df.index[0], col]
-        if isinstance(first, str) or first == -1:
-            le_dict[col] = LabelEncoder()
-            df[col] = le_dict[col].fit_transform(df.astype(str).__getattr__(col))
-    return df
-
-
-def transform_data(df: DataFrame):
-    """
-    Преобразование текстовых данных в числовой эквивалент по обученным категориальным признакам
-    :param df: входные данные
-    :return: DataFrame
-    """
-    try:
-        for col in df.columns:
-            first = df.loc[df.index[0], col]
-            if isinstance(first, str) or first == -1:
-                df[col] = le_dict[col].transform(df.astype(str).__getattr__(col))
-        return df
-    except ValueError as ve:
-        application.ui.tb_output.setPlainText(str(ve))
-    except KeyError as ke:
-        application.ui.tb_output.setPlainText(str(ke))
-
-
-def print_model_info(model, x, y):
-    """
-    Позволяет выводить в консоль все данные о качестве модели
-    (веса каждого параметра, общее качество, коэффициент детерминации, средняя абсолютная ошибка)
-    :param model: модель
-    :param x: тестовые данные x
-    :param y: тестовые данные y
-    """
-    # веса
-    print_with_header("Веса", model.feature_importances_)
-
-    # точность
-    print_with_header("Качество", model.score(x, y).round(2))
-
-    # коэффициент детерминации
-    print_with_header("R^2", r2_score(y, model.predict(x)).round(2))
-
-    # средняя абсолютная ошибка
-    print_with_header("MAE", mean_absolute_error(y, model.predict(x)).round(2))
 
 
 if __name__ == "__main__":
@@ -295,5 +171,5 @@ if __name__ == "__main__":
 
     # Работа с Qt приложением
     app = QtWidgets.QApplication(sys.argv)
-    application = MainWindow()
+    main_window = MainWindow()
     sys.exit(app.exec())
