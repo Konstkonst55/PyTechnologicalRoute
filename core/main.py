@@ -2,6 +2,8 @@
 import os
 import sys
 import asyncio
+import time
+
 import pandas as pd
 from art import tprint
 from PyQt5 import QtWidgets
@@ -130,19 +132,31 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # функция нажатия на кнопку b_learn_open
     def learn_open_click(self):
-        file_name = pick_file()
+        try:
+            file_name = pick_file()
 
-        tprint("TR")
+            tprint("TR")
 
-        if file_name != "":
-            x_trn, x_test, y_trn, y_test = asyncio.run(self.data_processor.process_data(file_name, osn_col_name))
-            asyncio.run(self.model_processor.fit_model(x_trn, y_trn, x_test, y_test))
+            if file_name != "":
+                start_fit_time = time.time()
+                self.ui.pb_fit_progress.setValue(24)
 
-            show_message("Модель успешно обучена и сохранена!")
+                x_trn, x_test, y_trn, y_test = asyncio.run(self.data_processor.process_data(file_name, osn_col_name))
+                asyncio.run(self.model_processor.fit_model(x_trn, y_trn, x_test, y_test))
+
+                end_fit_time = time.time()
+                self.ui.l_info_tr.setText(f"{end_fit_time - start_fit_time:2f}s")
+                self.ui.pb_fit_progress.setValue(100)
+
+                show_message("Модель успешно обучена и сохранена!")
+                self.ui.pb_fit_progress.setValue(0)
+            else:
+                self.model_processor.rfr_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
+
+        except KeyError as ke:
+            self.ui.tb_output.setPlainText(str(ke))
             self.ui.pb_fit_progress.setValue(0)
-        else:
-            self.model_processor.rfr_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
-
+        
     def predict_open_click(self):
         pass
 
