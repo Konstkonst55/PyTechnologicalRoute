@@ -43,11 +43,11 @@ class ModelProcessor:
         :param y_test: входная выборка тестовых данных
         :return: модель RandomForestRegressor
         """
-        self.rfr_model = get_rfr_model(Constants.MODEL_PATH)
+        self.rfr_model = get_rfr_model(Constants.MODEL_PATH, Constants.MODEL_FILE_NAME)
 
         self.rfr_model.fit(x_trn, y_trn)
 
-        save(self.rfr_model, Constants.MODEL_PATH)
+        save(self.rfr_model, Constants.MODEL_PATH, Constants.MODEL_FILE_NAME)
 
         print_model_info(self.rfr_model, x_test, y_test)
 

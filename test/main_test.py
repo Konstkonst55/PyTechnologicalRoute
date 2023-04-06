@@ -148,13 +148,36 @@ def __test_le():  # ✅
     print(df)
     joblib.dump(le, "../data/encoders/le.joblib")
     new_le = joblib.load("../data/encoders/le.joblib")
-    print(Path("../data/encoders/le.joblib").exists())
+
     df2["1"] = new_le["1"].transform(df2.astype(str).__getattr__("1"))
     df2["2"] = new_le["2"].transform(df2.astype(str).__getattr__("2"))
     df2["3"] = new_le["3"].transform(df2.astype(str).__getattr__("3"))
     print(df2)
     print(le["1"].classes_)  # <----- ['1', '7']
+    le_test = joblib.load("../data/encoders/label_encoders_dict.joblib")
+    print(le_test["name"].classes_)
+
+
+def __test_dict():
+    to_string_dict = {
+        1: "1",
+        2: "2",
+        3: "3",
+        4: "4",
+        5: "5",
+        6: "6",
+        7: "7",
+        8: "8",
+        9: "9",
+        10: "10",
+        11: "11",
+        12: "12"
+    }
+
+    dic = {}
+    print(to_string_dict.items())
+    print(len(dic.items()) < 1)
 
 
 if __name__ == "__main__":
-    __test_le()
+    __test_dict()

@@ -2,7 +2,9 @@ from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
+from core.utils import Constants
 from core.utils.FileReader import read_data_file
+from core.utils.FileSaver import get_le, save
 from core.utils.MessageDisplayer import print_with_header
 
 
@@ -36,7 +38,7 @@ class DataProcessor:
         Если LabelEncoder никогда не встречал входную строку, то выбрасывается исключение
     """
     def __init__(self):
-        self.le_dict = {}
+        self.le_dict = get_le(Constants.ENCODER_PATH, Constants.ENCODER_FILE_NAME)
 
     async def process_data(self, file_name: str, predict_col_name: str):
         """
@@ -79,6 +81,7 @@ class DataProcessor:
             if isinstance(first, str) or first == -1:
                 self.le_dict[col] = LabelEncoder()
                 df[col] = self.le_dict[col].fit_transform(df.astype(str).__getattr__(col))
+        save(self.le_dict, Constants.ENCODER_PATH, Constants.ENCODER_FILE_NAME)
         return df
 
     def transform_data(self, df: DataFrame) -> DataFrame:

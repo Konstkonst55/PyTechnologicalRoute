@@ -1,4 +1,3 @@
-
 import os
 import sys
 import asyncio
@@ -10,7 +9,7 @@ from PyQt5 import QtWidgets
 from pandas import DataFrame
 from PyQt5.QtCore import QRegExp
 from core.utils import Constants
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLineEdit, QComboBox
 from ui.MainWindow import MainWindowUi
 from PyQt5.QtGui import QRegExpValidator
 from core.utils.FileReader import pick_file
@@ -20,10 +19,10 @@ from core.processors.DataProcessor import DataProcessor
 from core.processors.ModelProcessor import ModelProcessor
 from core.utils.Validator import field_is_filled, values_is_float
 
-# LabelEncoder dict
 df_columns = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
 osn_col_name = 'osn'
 usl_col_name = 'usl'
+
 
 # README
 # На вход файлы подаются в виде массива со следующей последовательностью данных:
@@ -32,47 +31,21 @@ usl_col_name = 'usl'
 # Массив данных для обучения и прогнозирования можно загрузить в виде .csv файла, сохраненного с разделителями ';'
 # и кодировкой utf-8. В случае, если данные в полях отсутствуют, то пустые поля необходимо заменить на -1.
 
-# Тестовые данные для прогнозирования (выход osn 002-053)
-predict_test_data = DataFrame(
-    [["Балка",
-      261,
-      0,
-      0,
-      90,
-      "Д19ч",
-      "Профиль",
-      "Шероховатость поверхности указана цветом в соответствии с инструкцией 30.0011.0155.998 . "
-      "| Предельные отклонения размеров, допуски формы и расположения поверхностей - по ОСТ 1 00022-80 . "
-      "| Контроль визуальный - после анодирования . "
-      "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
-      "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
-      "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
-      "| Покрытие: Ан.Окс.нхр Эмаль ЭП-140, оранжевая. 597 ОСТ 1 90055-85 . "
-      "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 . "
-      "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 . "
-      "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 . "
-      "| Маркировать Чк и клеймить Кк шрифтом ПО-5 ГОСТ 2930-62 ."
-      ]]
-)
-
-
-# todo добавить ComboBox для текстовых данных из DataProcessor.le_dict
-
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.model_processor = ModelProcessor(get_rfr_model(Constants.MODEL_PATH))
+        self.model_processor = ModelProcessor(get_rfr_model(Constants.MODEL_PATH, Constants.MODEL_FILE_NAME))
         self.data_processor = DataProcessor()
         self.ui = MainWindowUi()
         self.ui.setup_ui(self)
         self.init_ui()
+        self.load_cb_data()
         self.show()
 
     def init_ui(self):
-        self.setFixedSize(580, 440)
         # Установка ограничений для текстового ввода
-        reg_ex = QRegExp("[0-9]+.?[0-9]{,2}")
+        reg_ex = QRegExp(Constants.REGEX_FLOAT_TYPE)
         self.ui.le_gsy.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsy))
         self.ui.le_gsx.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsx))
         self.ui.le_cg.setValidator(QRegExpValidator(reg_ex, self.ui.le_cg))
@@ -83,6 +56,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.b_info.clicked.connect(self.show_info_click)
         self.ui.b_ready.clicked.connect(self.predict_click)
         self.ui.b_predict_open.clicked.connect(self.predict_open_click)
+
+    def load_cb_data(self):
+        if len(self.data_processor.le_dict.items()) < 1:
+            self.ui.tb_output.setPlainText("Необходимо обучить модель")
+            return
+
+        cb_list = {self.ui.cb_name, self.ui.cb_mark, self.ui.cb_spf, self.ui.cb_tt}
+        cb_dict = {self.ui.cb_name: "name", self.ui.cb_mark: "mark", self.ui.cb_spf: "spf", self.ui.cb_tt: "tt"}
+
+        for cb in cb_list:
+            cb.clear()
+            cb.addItems(self.data_processor.le_dict[cb_dict[cb]].classes_)
+            cb.setCurrentIndex(-1)
 
     # функция нажатия на кнопку b_info
     @staticmethod
@@ -117,9 +103,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
             self.ui.tb_output.setPlainText(
                 str(self.data_processor.le_dict[osn_col_name]
-                    .inverse_transform(
-                        predict_df.astype(int).__getattr__(osn_col_name))
-                    )
+                .inverse_transform(
+                    predict_df.astype(int).__getattr__(osn_col_name))
+                )
             )
 
         except AttributeError:
@@ -142,15 +128,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
                 x_trn, x_test, y_trn, y_test = asyncio.run(self.data_processor.process_data(file_name, osn_col_name))
                 asyncio.run(self.model_processor.fit_model(x_trn, y_trn, x_test, y_test))
+                self.load_cb_data()
 
                 end_fit_time = time.time()
-                self.ui.l_info_tr.setText(f"{end_fit_time - start_fit_time:2f}s")
+                self.ui.l_info_tr.setText(f"{(end_fit_time - start_fit_time):.2f}s")
                 self.ui.pb_fit_progress.setValue(100)
 
                 show_message("Модель успешно обучена и сохранена!")
                 self.ui.pb_fit_progress.setValue(0)
             else:
-                self.model_processor.rfr_model = get_rfr_model(Constants.MODEL_PATH)
+                self.model_processor.rfr_model = get_rfr_model(Constants.MODEL_PATH, Constants.MODEL_FILE_NAME)
 
         except KeyError as ke:
             self.ui.tb_output.setPlainText(str(ke))
@@ -158,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow):
         except FileExistsError as fee:
             self.ui.tb_output.setPlainText(str(fee))
             self.ui.pb_fit_progress.setValue(0)
-        
+
     def predict_open_click(self):
         pass
 
@@ -168,14 +155,14 @@ class MainWindow(QtWidgets.QMainWindow):
         :return: возвращает данные с основными колонками, собранные из QLineEdit
         """
         return DataFrame(
-            [[self.ui.le_name.text(),
+            [[self.ui.cb_name.currentText(),
               float(self.ui.le_gsx.text()),
               float(self.ui.le_gsy.text()),
               float(self.ui.le_gsz.text()),
               float(self.ui.le_cg.text()),
-              self.ui.le_mark.text(),
-              self.ui.le_spf.text(),
-              self.ui.le_tt.toPlainText()]],
+              self.ui.cb_mark.currentText(),
+              self.ui.cb_spf.currentText(),
+              self.ui.cb_tt.currentText()]],
             columns=df_columns
         )
 
@@ -189,3 +176,12 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     main_window = MainWindow()
     sys.exit(app.exec())
+
+"""
+
+ _           _   
+| |_ ___ ___| |_ 
+| '_|   |_ -|  _|
+|_,_|_|_|___|_|  
+
+"""
