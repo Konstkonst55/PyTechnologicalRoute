@@ -21,7 +21,8 @@ def pick_file() -> str:
     return file_dialog.getOpenFileName(
         caption=Constants.FILE_EXPL_HEADER,
         directory=Constants.FILE_EXPL_START_PATH,
-        filter=Constants.FILE_EXPL_TYPES)[0]
+        filter=Constants.FILE_EXPL_TYPES
+    )[0]  # только путь до файла без типов
 
 
 def read_data_file(file_name: str):

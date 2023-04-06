@@ -1,10 +1,9 @@
 from pandas import DataFrame
-from sklearn.ensemble import RandomForestRegressor
 
 from core.processors.DataProcessor import DataProcessor
 from core.utils import Constants
+from core.utils.FileSaver import get_rfr_model, save
 from core.utils.MessageDisplayer import print_model_info
-from core.utils.RFRModel import get_rfr_model, save_model
 
 
 class ModelProcessor:
@@ -44,11 +43,11 @@ class ModelProcessor:
         :param y_test: входная выборка тестовых данных
         :return: модель RandomForestRegressor
         """
-        self.rfr_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
+        self.rfr_model = get_rfr_model(Constants.MODEL_PATH)
 
         self.rfr_model.fit(x_trn, y_trn)
 
-        save_model(self.rfr_model, Constants.SAVE_MODEL_PATH)
+        save(self.rfr_model, Constants.MODEL_PATH)
 
         print_model_info(self.rfr_model, x_test, y_test)
 
@@ -64,8 +63,7 @@ class ModelProcessor:
         try:
             predict = self.rfr_model.predict(data_processor.transform_data(data))
             data.insert(5, predict_col_name, predict)
+            return data
 
         except ValueError as ve:
             raise ValueError(f"Неизвестные входные данные {str(ve)}")
-
-        return data

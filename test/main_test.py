@@ -1,12 +1,16 @@
+from pathlib import Path
+
+import joblib
 import numpy as np
 from gensim.models import Word2Vec
 from pandas import DataFrame
-from pandas.core.indexes.frozen import FrozenList
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import LabelEncoder
 
 
-def test_learn():
+# файл для unit-тестирования, но пока просто тестирование разных фич
+
+def __test_learn():  # ✅
     x = np.array([[1, 2], [1, 4], [1, 0], [10, 2], [10, 4], [10, 0], ])  # данные для обучения
 
     kmeans = KMeans(n_clusters=2, random_state=0)
@@ -18,7 +22,7 @@ def test_learn():
     print('Predict: ', y)
 
 
-def test_transform():
+def __test_transform():  # ✅
     data_frame = np.array([['this', 'is', 'the', 'first', 'sentence', 'for', 'word2vec'],
                            ['this', 'is', 'the', 'second', 'sentence'],
                            ['yet', 'another', 'sentence'],
@@ -36,7 +40,7 @@ def test_transform():
     print(data_frame[:, 4])
 
 
-def test_word2vec():
+def __test_word2vec():  # ✅
     sentences = [['this', 'is', 'the', 'first', 'sentence', 'for', 'word2vec'],
                  ['this', 'is', 'the', 'second', 'sentence'],
                  ['yet', 'another', 'sentence'],
@@ -46,7 +50,7 @@ def test_word2vec():
     print(model)
 
 
-def test_encoder():
+def __test_encoder():  # ✅
     # создаем двумерный массив с категориальными данными
     data = [['France'], ['Spain'], ['Germany'], ['Spain'], ['Germany'], ['France']]
 
@@ -60,7 +64,7 @@ def test_encoder():
     print(encoded_data)
 
 
-def test_array():  # ok!!
+def __test_array():  # ✅
     arr2d3r = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
     arr2d1r = np.array([[1, 2, 3]])
 
@@ -68,14 +72,14 @@ def test_array():  # ok!!
     print(arr2d1r[:, 0])
 
 
-def test_data_frame():
+def __test_data_frame():  # ✅
     df = DataFrame([[1, 2, 3], [4, 5, 6], [7, 8, 9]], columns=[1, 2, 3])
     print(df)
     nparr = np.array(df)
     print(nparr)
 
 
-def find_text_and_transform():
+def __find_text_and_transform():  # ✅
     cols_name_list = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
     le_dict = {}
     df = DataFrame(
@@ -121,5 +125,36 @@ def find_text_and_transform():
     print(le_dict['mark'].inverse_transform(df['mark']))
 
 
+def __test_le():  # ✅
+    df = DataFrame(
+        [["1", "2", "3"],
+         ["7", "2", "6"],
+         ["7", "8", "6"]],
+        columns=["1", "2", "3"]
+    )
+    df2 = DataFrame(
+        [["7", "8", "6"]],
+        columns=["1", "2", "3"]
+    )
+    le = {
+        "1": LabelEncoder(),
+        "2": LabelEncoder(),
+        "3": LabelEncoder()
+    }
+
+    df["1"] = le["1"].fit_transform(df.astype(str).__getattr__("1"))
+    df["2"] = le["2"].fit_transform(df.astype(str).__getattr__("2"))
+    df["3"] = le["3"].fit_transform(df.astype(str).__getattr__("3"))
+    print(df)
+    joblib.dump(le, "../data/encoders/le.joblib")
+    new_le = joblib.load("../data/encoders/le.joblib")
+    print(Path("../data/encoders/le.joblib").exists())
+    df2["1"] = new_le["1"].transform(df2.astype(str).__getattr__("1"))
+    df2["2"] = new_le["2"].transform(df2.astype(str).__getattr__("2"))
+    df2["3"] = new_le["3"].transform(df2.astype(str).__getattr__("3"))
+    print(df2)
+    print(le["1"].classes_)  # <----- ['1', '7']
+
+
 if __name__ == "__main__":
-    find_text_and_transform()
+    __test_le()

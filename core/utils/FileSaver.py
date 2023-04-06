@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import joblib
@@ -17,10 +18,13 @@ def get_rfr_model(path: str):
         return RandomForestRegressor()
 
 
-def save_model(model, path: str):
+def save(value, path: str):
     """
     Сохраняет файл модели по указанному пути
-    :param model: модель
+    :param value: Any
     :param path: путь для сохранения
     """
-    joblib.dump(model, path)
+    if Path(path).exists():
+        joblib.dump(value, path)
+    else:
+        raise FileExistsError("Путь, указанный при сохранении файла отсутствует")

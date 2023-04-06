@@ -97,4 +97,4 @@ class DataProcessor:
         except ValueError as ve:
             raise ValueError(f"Неизвестные входные данные {str(ve)}")
         except KeyError as ke:
-            raise ValueError(f"Неизвестные входные данные {str(ke)}")
+            raise KeyError(f"Неизвестные входные данные {str(ke)}")

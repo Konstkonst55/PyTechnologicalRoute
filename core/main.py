@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QLineEdit
 from ui.MainWindow import MainWindowUi
 from PyQt5.QtGui import QRegExpValidator
 from core.utils.FileReader import pick_file
-from core.utils.RFRModel import get_rfr_model
+from core.utils.FileSaver import get_rfr_model
 from core.utils.MessageDisplayer import show_message
 from core.processors.DataProcessor import DataProcessor
 from core.processors.ModelProcessor import ModelProcessor
@@ -24,7 +24,6 @@ from core.utils.Validator import field_is_filled, values_is_float
 df_columns = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
 osn_col_name = 'osn'
 usl_col_name = 'usl'
-save_model_path = os.path.join(os.path.dirname(__file__), Constants.SAVE_MODEL_PATH)
 
 # README
 # На вход файлы подаются в виде массива со следующей последовательностью данных:
@@ -63,7 +62,7 @@ predict_test_data = DataFrame(
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.model_processor = ModelProcessor(get_rfr_model(Constants.LOAD_MODEL_PATH))
+        self.model_processor = ModelProcessor(get_rfr_model(Constants.MODEL_PATH))
         self.data_processor = DataProcessor()
         self.ui = MainWindowUi()
         self.ui.setup_ui(self)
@@ -151,10 +150,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 show_message("Модель успешно обучена и сохранена!")
                 self.ui.pb_fit_progress.setValue(0)
             else:
-                self.model_processor.rfr_model = get_rfr_model(Constants.LOAD_MODEL_PATH)
+                self.model_processor.rfr_model = get_rfr_model(Constants.MODEL_PATH)
 
         except KeyError as ke:
             self.ui.tb_output.setPlainText(str(ke))
+            self.ui.pb_fit_progress.setValue(0)
+        except FileExistsError as fee:
+            self.ui.tb_output.setPlainText(str(fee))
             self.ui.pb_fit_progress.setValue(0)
         
     def predict_open_click(self):
