@@ -1,11 +1,17 @@
+import sys
 from pathlib import Path
 
 import joblib
 import numpy as np
+from PyQt5.QtWidgets import QLineEdit
 from gensim.models import Word2Vec
 from pandas import DataFrame
+from pyqt5_plugins.examplebutton import QtWidgets
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import LabelEncoder
+
+from core.main import MainWindow
+from core.utils.Validator import field_is_filled
 
 
 # файл для unit-тестирования, но пока просто тестирование разных фич

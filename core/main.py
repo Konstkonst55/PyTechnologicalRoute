@@ -23,7 +23,6 @@ df_columns = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
 osn_col_name = 'osn'
 usl_col_name = 'usl'
 
-
 # README
 # На вход файлы подаются в виде массива со следующей последовательностью данных:
 # uid(необязательно) name(str) gs_x(float) gs_y(float) gs_z(float) cg(float) osn(str) mark(str) spf(str) tt(str)
@@ -39,6 +38,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.data_processor = DataProcessor()
         self.ui = MainWindowUi()
         self.ui.setup_ui(self)
+        self.cb_list = {self.ui.cb_name, self.ui.cb_mark, self.ui.cb_spf, self.ui.cb_tt}
+        self.cb_dict = {self.ui.cb_name: "name", self.ui.cb_mark: "mark", self.ui.cb_spf: "spf", self.ui.cb_tt: "tt"}
         self.init_ui()
         self.load_cb_data()
         self.show()
@@ -56,18 +57,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.b_info.clicked.connect(self.show_info_click)
         self.ui.b_ready.clicked.connect(self.predict_click)
         self.ui.b_predict_open.clicked.connect(self.predict_open_click)
+        self.ui.b_clear_in.clicked.connect(self.clear_in_click)
+        self.ui.b_clear_out.clicked.connect(self.clear_out_click)
+
+    def clear_in_click(self):
+        for cb in self.cb_list:
+            cb.setCurrentIndex(-1)
+
+        for le in self.findChildren(QLineEdit):
+            le.setText("")
+
+    def clear_out_click(self):
+        self.ui.tb_output.setPlainText("")
 
     def load_cb_data(self):
         if len(self.data_processor.le_dict.items()) < 1:
             self.ui.tb_output.setPlainText("Необходимо обучить модель")
             return
 
-        cb_list = {self.ui.cb_name, self.ui.cb_mark, self.ui.cb_spf, self.ui.cb_tt}
-        cb_dict = {self.ui.cb_name: "name", self.ui.cb_mark: "mark", self.ui.cb_spf: "spf", self.ui.cb_tt: "tt"}
-
-        for cb in cb_list:
+        for cb in self.cb_list:
             cb.clear()
-            cb.addItems(self.data_processor.le_dict[cb_dict[cb]].classes_)
+            cb.addItems(self.data_processor.le_dict[self.cb_dict[cb]].classes_)
             cb.setCurrentIndex(-1)
 
     # функция нажатия на кнопку b_info
@@ -78,7 +88,8 @@ class MainWindow(QtWidgets.QMainWindow):
     # функция нажатия на кнопку b_ready
     def predict_click(self):
         try:
-            print(len(self.model_processor.rfr_model.estimators_))
+            if not hasattr(self.model_processor.rfr_model, "estimators_"):
+                raise AttributeError("Сначала необходимо обучить модель")
 
             if not field_is_filled(self.findChildren(QLineEdit)):
                 show_message("Заполните все поля!")
@@ -110,8 +121,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
             )
 
-        except AttributeError:
-            show_message("Проверьте входной файл")
+        except AttributeError as ae:
+            self.ui.tb_output.setPlainText(str(ae))
         except KeyError as ke:
             self.ui.tb_output.setPlainText(str(ke))
         except ValueError as ve:

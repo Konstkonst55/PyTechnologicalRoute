@@ -15,10 +15,15 @@ def is_float(obj) -> bool:
 def field_is_filled(line_edits: list) -> bool:
     """
     Проверка на заполненность всех текстовых полей типа QLineEdit
+    (или других объектов, содержащих атрибут 'text')
     :return: True, если все текстовые поля заполнены
     False, если хотя бы одно поле не заполнено
     """
+    attr = "text"
     for le in line_edits:
+        if not hasattr(le, attr):
+            raise AttributeError(f"Поле {type(le)} не содержит атрибута {attr}")
+
         if le.text() == "":
             return False
     return True
