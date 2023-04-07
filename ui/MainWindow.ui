@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>671</width>
-    <height>664</height>
+    <height>668</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -85,7 +85,7 @@ border: 0px solid black;
        <attribute name="title">
         <string>osn</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0">
         <property name="spacing">
          <number>5</number>
         </property>
@@ -788,17 +788,73 @@ color: white;
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="l_out">
-          <property name="font">
-           <font>
-            <family>Segoe UI Semilight</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>output</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="hl_out_header" stretch="5,0,0">
+          <item>
+           <widget class="QLabel" name="l_out">
+            <property name="font">
+             <font>
+              <family>Segoe UI Semilight</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>output</string>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignRight">
+           <widget class="QPushButton" name="b_clear_in">
+            <property name="font">
+             <font>
+              <family>Segoe UI Semilight</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+border-radius: 5px;
+border: 1px solid #2B2A29;
+color: black;
+padding: 3px 10px 3px 10px;
+}
+
+QPushButton:hover{
+background: solid #625B71;
+color: white;
+}</string>
+            </property>
+            <property name="text">
+             <string>clear input</string>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignRight">
+           <widget class="QPushButton" name="b_clear_out">
+            <property name="font">
+             <font>
+              <family>Segoe UI Semilight</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton{
+border-radius: 5px;
+border: 1px solid #2B2A29;
+color: black;
+padding: 3px 10px 3px 10px;
+}
+
+QPushButton:hover{
+background: solid #625B71;
+color: white;
+}</string>
+            </property>
+            <property name="text">
+             <string>clear output</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="Line" name="bottom_line">

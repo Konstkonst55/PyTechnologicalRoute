@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class MainWindowUi(object):
     def setup_ui(self, main_window):
         main_window.setObjectName("main_window")
-        main_window.resize(671, 664)
+        main_window.resize(671, 668)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -39,8 +39,8 @@ class MainWindowUi(object):
         self.tabs.setFont(font)
         self.tabs.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.tabs.setStyleSheet("\n"
-"border: 0px solid black;\n"
-"")
+                                "border: 0px solid black;\n"
+                                "")
         self.tabs.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.tabs.setElideMode(QtCore.Qt.ElideNone)
         self.tabs.setUsesScrollButtons(True)
@@ -70,16 +70,16 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.b_learn_open.setFont(font)
         self.b_learn_open.setStyleSheet("QPushButton{\n"
-"border-radius: 5px;\n"
-"border: 1px solid #2B2A29;\n"
-"padding: 10px 10px 10px 10px;\n"
-"color: black;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"background: solid #625B71;\n"
-"color: white;\n"
-"}")
+                                        "border-radius: 5px;\n"
+                                        "border: 1px solid #2B2A29;\n"
+                                        "padding: 10px 10px 10px 10px;\n"
+                                        "color: black;\n"
+                                        "}\n"
+                                        "\n"
+                                        "QPushButton:hover{\n"
+                                        "background: solid #625B71;\n"
+                                        "color: white;\n"
+                                        "}")
         self.b_learn_open.setObjectName("b_learn_open")
         self.hl_top.addWidget(self.b_learn_open, 0, QtCore.Qt.AlignTop)
         self.b_predict_open = QtWidgets.QPushButton(self.tab_osn)
@@ -95,16 +95,16 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.b_predict_open.setFont(font)
         self.b_predict_open.setStyleSheet("QPushButton{\n"
-"border-radius: 5px;\n"
-"border: 1px solid #2B2A29;\n"
-"padding: 10px 10px 10px 10px;\n"
-"color: black;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"background: solid #625B71;\n"
-"color: white;\n"
-"}")
+                                          "border-radius: 5px;\n"
+                                          "border: 1px solid #2B2A29;\n"
+                                          "padding: 10px 10px 10px 10px;\n"
+                                          "color: black;\n"
+                                          "}\n"
+                                          "\n"
+                                          "QPushButton:hover{\n"
+                                          "background: solid #625B71;\n"
+                                          "color: white;\n"
+                                          "}")
         self.b_predict_open.setObjectName("b_predict_open")
         self.hl_top.addWidget(self.b_predict_open, 0, QtCore.Qt.AlignTop)
         self.b_info = QtWidgets.QToolButton(self.tab_osn)
@@ -116,9 +116,9 @@ class MainWindowUi(object):
         self.b_info.setFont(font)
         self.b_info.setToolTipDuration(-1)
         self.b_info.setStyleSheet("border-radius: 5px;\n"
-"border: 1px solid #2B2A29;\n"
-"color: black;\n"
-"")
+                                  "border: 1px solid #2B2A29;\n"
+                                  "color: black;\n"
+                                  "")
         self.b_info.setObjectName("b_info")
         self.hl_top.addWidget(self.b_info, 0, QtCore.Qt.AlignVCenter)
         self.l_info_tr = QtWidgets.QLabel(self.tab_osn)
@@ -136,11 +136,11 @@ class MainWindowUi(object):
         self.l_info_tr.setAcceptDrops(False)
         self.l_info_tr.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.l_info_tr.setStyleSheet("border-radius: 5px;\n"
-"border: 1px solid #2B2A29;\n"
-"padding: 10px 10px 10px 10px;\n"
-"color: black;\n"
-"")
-        self.l_info_tr.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+                                     "border: 1px solid #2B2A29;\n"
+                                     "padding: 10px 10px 10px 10px;\n"
+                                     "color: black;\n"
+                                     "")
+        self.l_info_tr.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.l_info_tr.setObjectName("l_info_tr")
         self.hl_top.addWidget(self.l_info_tr, 0, QtCore.Qt.AlignTop)
         self.verticalLayout.addLayout(self.hl_top)
@@ -169,10 +169,10 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.cb_name.setFont(font)
         self.cb_name.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                   "border-radius: 5px;\n"
+                                   "background: #D1D2FD solid;\n"
+                                   "color: #2B2A29;\n"
+                                   "")
         self.cb_name.setEditable(True)
         self.cb_name.setInsertPolicy(QtWidgets.QComboBox.InsertAtTop)
         self.cb_name.setIconSize(QtCore.QSize(20, 20))
@@ -197,10 +197,10 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.le_gsx.setFont(font)
         self.le_gsx.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
         self.le_gsx.setInputMethodHints(QtCore.Qt.ImhHiddenText)
         self.le_gsx.setObjectName("le_gsx")
         self.vl_x.addWidget(self.le_gsx)
@@ -222,10 +222,10 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.le_gsy.setFont(font)
         self.le_gsy.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
         self.le_gsy.setInputMethodHints(QtCore.Qt.ImhNone)
         self.le_gsy.setObjectName("le_gsy")
         self.vl_y.addWidget(self.le_gsy)
@@ -247,10 +247,10 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.le_gsz.setFont(font)
         self.le_gsz.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
         self.le_gsz.setObjectName("le_gsz")
         self.vl_z.addWidget(self.le_gsz)
         self.hl_text_top.addLayout(self.vl_z)
@@ -271,10 +271,10 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.le_cg.setFont(font)
         self.le_cg.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                 "border-radius: 5px;\n"
+                                 "background: #D1D2FD solid;\n"
+                                 "color: #2B2A29;\n"
+                                 "")
         self.le_cg.setInputMethodHints(QtCore.Qt.ImhNone)
         self.le_cg.setObjectName("le_cg")
         self.vl_cg.addWidget(self.le_cg)
@@ -300,10 +300,10 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.cb_mark.setFont(font)
         self.cb_mark.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                   "border-radius: 5px;\n"
+                                   "background: #D1D2FD solid;\n"
+                                   "color: #2B2A29;\n"
+                                   "")
         self.cb_mark.setEditable(True)
         self.cb_mark.setInsertPolicy(QtWidgets.QComboBox.InsertAtTop)
         self.cb_mark.setIconSize(QtCore.QSize(20, 20))
@@ -325,10 +325,10 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.cb_spf.setFont(font)
         self.cb_spf.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                  "border-radius: 5px;\n"
+                                  "background: #D1D2FD solid;\n"
+                                  "color: #2B2A29;\n"
+                                  "")
         self.cb_spf.setEditable(True)
         self.cb_spf.setInsertPolicy(QtWidgets.QComboBox.InsertAtTop)
         self.cb_spf.setIconSize(QtCore.QSize(20, 20))
@@ -351,10 +351,10 @@ class MainWindowUi(object):
         self.cb_tt.setFont(font)
         self.cb_tt.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.cb_tt.setStyleSheet("border: 1px solid #8F8FB0;\n"
-"border-radius: 5px;\n"
-"background: #D1D2FD solid;\n"
-"color: #2B2A29;\n"
-"")
+                                 "border-radius: 5px;\n"
+                                 "background: #D1D2FD solid;\n"
+                                 "color: #2B2A29;\n"
+                                 "")
         self.cb_tt.setEditable(True)
         self.cb_tt.setCurrentText("")
         self.cb_tt.setInsertPolicy(QtWidgets.QComboBox.InsertAtTop)
@@ -374,25 +374,65 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.b_ready.setFont(font)
         self.b_ready.setStyleSheet("QPushButton{\n"
-"border-radius: 5px;\n"
-"border: 1px solid #2B2A29;\n"
-"color: black;\n"
-"padding: 10px 10px 10px 10px;\n"
-"}\n"
-"\n"
-"QPushButton:hover{\n"
-"background: solid #625B71;\n"
-"color: white;\n"
-"}")
+                                   "border-radius: 5px;\n"
+                                   "border: 1px solid #2B2A29;\n"
+                                   "color: black;\n"
+                                   "padding: 10px 10px 10px 10px;\n"
+                                   "}\n"
+                                   "\n"
+                                   "QPushButton:hover{\n"
+                                   "background: solid #625B71;\n"
+                                   "color: white;\n"
+                                   "}")
         self.b_ready.setObjectName("b_ready")
         self.verticalLayout.addWidget(self.b_ready, 0, QtCore.Qt.AlignRight)
+        self.hl_out_header = QtWidgets.QHBoxLayout()
+        self.hl_out_header.setObjectName("hl_out_header")
         self.l_out = QtWidgets.QLabel(self.tab_osn)
         font = QtGui.QFont()
         font.setFamily("Segoe UI Semilight")
         font.setPointSize(9)
         self.l_out.setFont(font)
         self.l_out.setObjectName("l_out")
-        self.verticalLayout.addWidget(self.l_out)
+        self.hl_out_header.addWidget(self.l_out)
+        self.b_clear_in = QtWidgets.QPushButton(self.tab_osn)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI Semilight")
+        font.setPointSize(9)
+        self.b_clear_in.setFont(font)
+        self.b_clear_in.setStyleSheet("QPushButton{\n"
+                                      "border-radius: 5px;\n"
+                                      "border: 1px solid #2B2A29;\n"
+                                      "color: black;\n"
+                                      "padding: 3px 10px 3px 10px;\n"
+                                      "}\n"
+                                      "\n"
+                                      "QPushButton:hover{\n"
+                                      "background: solid #625B71;\n"
+                                      "color: white;\n"
+                                      "}")
+        self.b_clear_in.setObjectName("b_clear_in")
+        self.hl_out_header.addWidget(self.b_clear_in, 0, QtCore.Qt.AlignRight)
+        self.b_clear_out = QtWidgets.QPushButton(self.tab_osn)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI Semilight")
+        font.setPointSize(9)
+        self.b_clear_out.setFont(font)
+        self.b_clear_out.setStyleSheet("QPushButton{\n"
+                                       "border-radius: 5px;\n"
+                                       "border: 1px solid #2B2A29;\n"
+                                       "color: black;\n"
+                                       "padding: 3px 10px 3px 10px;\n"
+                                       "}\n"
+                                       "\n"
+                                       "QPushButton:hover{\n"
+                                       "background: solid #625B71;\n"
+                                       "color: white;\n"
+                                       "}")
+        self.b_clear_out.setObjectName("b_clear_out")
+        self.hl_out_header.addWidget(self.b_clear_out, 0, QtCore.Qt.AlignRight)
+        self.hl_out_header.setStretch(0, 5)
+        self.verticalLayout.addLayout(self.hl_out_header)
         self.bottom_line = QtWidgets.QFrame(self.tab_osn)
         self.bottom_line.setStyleSheet("background: #2B2A29;")
         self.bottom_line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -411,9 +451,9 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.tb_output.setFont(font)
         self.tb_output.setStyleSheet("border-radius: 5px;\n"
-"border: 1px solid  rgb(155, 241, 56);\n"
-"color: black;\n"
-"")
+                                     "border: 1px solid  rgb(155, 241, 56);\n"
+                                     "color: black;\n"
+                                     "")
         self.tb_output.setReadOnly(True)
         self.tb_output.setPlainText("")
         self.tb_output.setObjectName("tb_output")
@@ -424,9 +464,9 @@ class MainWindowUi(object):
         font.setPointSize(9)
         self.pb_fit_progress.setFont(font)
         self.pb_fit_progress.setStyleSheet("border-radius: 5px;\n"
-"border: 1px solid  rgb(155, 241, 56);\n"
-"color: black;\n"
-"")
+                                           "border: 1px solid  rgb(155, 241, 56);\n"
+                                           "color: black;\n"
+                                           "")
         self.pb_fit_progress.setProperty("value", 0)
         self.pb_fit_progress.setAlignment(QtCore.Qt.AlignCenter)
         self.pb_fit_progress.setObjectName("pb_fit_progress")
@@ -471,6 +511,8 @@ class MainWindowUi(object):
         self.cb_tt.setToolTip(_translate("main_window", "Технические требования"))
         self.b_ready.setText(_translate("main_window", "Готово"))
         self.l_out.setText(_translate("main_window", "output"))
+        self.b_clear_in.setText(_translate("main_window", "clear input"))
+        self.b_clear_out.setText(_translate("main_window", "clear output"))
         self.tabs.setTabText(self.tabs.indexOf(self.tab_osn), _translate("main_window", "osn"))
         self.tabs.setTabText(self.tabs.indexOf(self.tab_usl), _translate("main_window", "usl"))
         self.usl.setText(_translate("main_window", "usl"))
