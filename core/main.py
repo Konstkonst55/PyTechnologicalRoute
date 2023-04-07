@@ -1,23 +1,23 @@
-import os
-import sys
 import asyncio
+import sys
 import time
 
 import pandas as pd
-from art import tprint
 from PyQt5 import QtWidgets
-from pandas import DataFrame
 from PyQt5.QtCore import QRegExp
-from core.utils import Constants
-from PyQt5.QtWidgets import QLineEdit, QComboBox
-from ui.MainWindow import MainWindowUi
 from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QLineEdit
+from art import tprint
+from pandas import DataFrame
+
+from core.processors.DataProcessor import DataProcessor
+from core.processors.ModelProcessor import ModelProcessor
+from core.utils import Constants
 from core.utils.FileReader import pick_file
 from core.utils.FileSaver import get_rfr_model
 from core.utils.MessageDisplayer import show_message
-from core.processors.DataProcessor import DataProcessor
-from core.processors.ModelProcessor import ModelProcessor
 from core.utils.Validator import field_is_filled, values_is_float
+from ui.MainWindow import MainWindowUi
 
 df_columns = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
 osn_col_name = 'osn'
@@ -102,9 +102,11 @@ class MainWindow(QtWidgets.QMainWindow):
             )
 
             self.ui.tb_output.setPlainText(
-                str(self.data_processor.le_dict[osn_col_name]
-                .inverse_transform(
-                    predict_df.astype(int).__getattr__(osn_col_name))
+                str(
+                    self.data_processor.le_dict[osn_col_name]
+                        .inverse_transform(
+                            predict_df.astype(int).__getattr__(osn_col_name)
+                        )
                 )
             )
 
@@ -120,9 +122,9 @@ class MainWindow(QtWidgets.QMainWindow):
         try:
             file_name = pick_file()
 
-            tprint("TR")
-
             if file_name != "":
+                tprint("TR")
+
                 start_fit_time = time.time()
                 self.ui.pb_fit_progress.setValue(24)
 
