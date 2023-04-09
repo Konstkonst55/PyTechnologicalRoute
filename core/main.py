@@ -6,7 +6,7 @@ import pandas as pd
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLineEdit, QListView
 from art import tprint
 from pandas import DataFrame
 
@@ -45,6 +45,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
     def init_ui(self):
+        # Установка ListView как представление для ComboBox tt
+        listView = QListView()
+        listView.setWordWrap(True)
+        self.ui.cb_tt.setView(listView)
+
         # Установка ограничений для текстового ввода
         reg_ex = QRegExp(Constants.REGEX_FLOAT_TYPE)
         self.ui.le_gsy.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsy))

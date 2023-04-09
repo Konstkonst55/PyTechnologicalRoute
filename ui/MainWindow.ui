@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
-    <height>668</height>
+    <width>732</width>
+    <height>675</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -57,23 +57,8 @@
 border: 0px solid black;
 </string>
       </property>
-      <property name="tabShape">
-       <enum>QTabWidget::Rounded</enum>
-      </property>
       <property name="currentIndex">
        <number>0</number>
-      </property>
-      <property name="elideMode">
-       <enum>Qt::ElideNone</enum>
-      </property>
-      <property name="usesScrollButtons">
-       <bool>true</bool>
-      </property>
-      <property name="documentMode">
-       <bool>false</bool>
-      </property>
-      <property name="tabsClosable">
-       <bool>false</bool>
       </property>
       <property name="movable">
        <bool>true</bool>
@@ -81,9 +66,9 @@ border: 0px solid black;
       <property name="tabBarAutoHide">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="tab_osn">
+      <widget class="QWidget" name="tab_osn_usl" native="true">
        <attribute name="title">
-        <string>osn</string>
+        <string>osn / usl</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0">
         <property name="spacing">
@@ -102,8 +87,32 @@ border: 0px solid black;
          <number>10</number>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="hl_top">
-          <item alignment="Qt::AlignTop">
+         <layout class="QHBoxLayout" name="hl_top" stretch="0,1,1,0,0">
+          <item>
+           <layout class="QVBoxLayout" name="vl_type">
+            <property name="rightMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="rb_osn">
+              <property name="text">
+               <string>osn</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rb_usl">
+              <property name="text">
+               <string>usl</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item alignment="Qt::AlignVCenter">
            <widget class="QPushButton" name="b_learn_open">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -147,7 +156,7 @@ color: white;
             </property>
            </widget>
           </item>
-          <item alignment="Qt::AlignTop">
+          <item alignment="Qt::AlignVCenter">
            <widget class="QPushButton" name="b_predict_open">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -228,7 +237,7 @@ color: black;
             </property>
            </widget>
           </item>
-          <item alignment="Qt::AlignTop">
+          <item alignment="Qt::AlignVCenter">
            <widget class="QLabel" name="l_info_tr">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -238,7 +247,7 @@ color: black;
             </property>
             <property name="minimumSize">
              <size>
-              <width>73</width>
+              <width>40</width>
               <height>40</height>
              </size>
             </property>
@@ -921,9 +930,9 @@ color: black;
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_usl">
+      <widget class="QWidget" name="tab_2" native="true">
        <attribute name="title">
-        <string>usl</string>
+        <string>other</string>
        </attribute>
       </widget>
      </widget>
