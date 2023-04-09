@@ -1,4 +1,5 @@
 import os
+from operator import concat
 from pathlib import Path
 
 import joblib
@@ -47,6 +48,6 @@ def save(value, path: str, name: str):
     :param path: путь для сохранения
     """
     if Path(path).exists():
-        joblib.dump(value, f"{path}{name}")
+        joblib.dump(value, concat(path, name))
     else:
-        raise FileExistsError("Путь, указанный при сохранении файла отсутствует")
+        raise FileExistsError(f"Путь {Path(path).absolute()}, указанный при сохранении файла {name} отсутствует")
