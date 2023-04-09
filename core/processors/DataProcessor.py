@@ -8,6 +8,8 @@ from core.utils.FileSaver import get_le, save
 from core.utils.MessageDisplayer import print_with_header
 
 
+# todo upd doc
+
 class DataProcessor:
     """
     Класс предназначен для преобразования входных данных для дальнейшего обучения модели на них
@@ -37,8 +39,10 @@ class DataProcessor:
         трансформирует текстовые данные, на которых уже обучены кодировщики.
         Если LabelEncoder никогда не встречал входную строку, то выбрасывается исключение
     """
+
     def __init__(self):
-        self.le_dict = get_le(Constants.ENCODER_PATH, Constants.ENCODER_FILE_NAME)
+        self.le_dict_osn = get_le(Constants.ENCODER_OSN_PATH, Constants.ENCODER_OSN_FILE_NAME)
+        self.le_dict_usl = get_le(Constants.ENCODER_USL_PATH, Constants.ENCODER_USL_FILE_NAME)
 
     async def process_data(self, file_name: str, predict_col_name: str):
         """
@@ -58,7 +62,12 @@ class DataProcessor:
                 dataset = dataset.drop('uid', axis=1)
 
             # Обучение кодировщика на всех входных данных и преобразование данных
-            dataset = self.fit_transform_data(dataset)
+            if predict_col_name == "osn":
+                dataset = self.fit_transform_osn_data(dataset)
+            elif predict_col_name == "usl":
+                dataset = self.fit_transform_usl_data(dataset)
+            else:
+                raise ValueError(f"Ошибка в наименовании прогнозируемой колонки {predict_col_name}")
 
             # Разбиение данных на прогнозируемые и обучающие
             trg_data = dataset[[predict_col_name]].values.ravel()
@@ -70,23 +79,23 @@ class DataProcessor:
         except KeyError as ke:
             raise KeyError(f"Проверьте входной файл {str(ke)}")
 
-    def fit_transform_data(self, df: DataFrame) -> DataFrame:
+    def fit_transform_osn_data(self, df: DataFrame) -> DataFrame:
         """
-        Обучение и преобразование текстовых данных в числовой эквивалент по категориальным признакам
+        Обучение и преобразование текстовых данных в числовой эквивалент по категориальным признакам основных цехов
         :param df: входные данные
         :return: преобразованные данные
         """
         for col in df.columns:
             first = df.loc[df.index[0], col]
             if isinstance(first, str) or first == -1:
-                self.le_dict[col] = LabelEncoder()
-                df[col] = self.le_dict[col].fit_transform(df.astype(str).__getattr__(col))
-        save(self.le_dict, Constants.ENCODER_PATH, Constants.ENCODER_FILE_NAME)
+                self.le_dict_osn[col] = LabelEncoder()
+                df[col] = self.le_dict_osn[col].fit_transform(df.astype(str).__getattr__(col))
+        save(self.le_dict_osn, Constants.ENCODER_OSN_PATH, Constants.ENCODER_OSN_FILE_NAME)
         return df
 
-    def transform_data(self, df: DataFrame) -> DataFrame:
+    def transform_osn_data(self, df: DataFrame) -> DataFrame:
         """
-        Преобразование текстовых данных в числовой эквивалент по обученным категориальным признакам
+        Преобразование текстовых данных в числовой эквивалент по обученным категориальным признакам основных цехов
         :param df: входные данные
         :return: преобразованные данные
         """
@@ -94,10 +103,58 @@ class DataProcessor:
             for col in df.columns:
                 first = df.loc[df.index[0], col]
                 if isinstance(first, str) or first == -1:
-                    df[col] = self.le_dict[col].transform(df.astype(str).__getattr__(col))
+                    df[col] = self.le_dict_osn[col].transform(df.astype(str).__getattr__(col))
             return df
 
         except ValueError as ve:
             raise ValueError(f"Неизвестные входные данные {str(ve)}")
         except KeyError as ke:
             raise KeyError(f"Неизвестные входные данные {str(ke)}")
+
+    def fit_transform_usl_data(self, df: DataFrame) -> DataFrame:
+        """
+        Обучение и преобразование текстовых данных в числовой эквивалент по категориальным признакам цехов-услуг
+        :param df: входные данные
+        :return: преобразованные данные
+        """
+        for col in df.columns:
+            first = df.loc[df.index[0], col]
+            if isinstance(first, str) or first == -1:
+                self.le_dict_usl[col] = LabelEncoder()
+                df[col] = self.le_dict_usl[col].fit_transform(df.astype(str).__getattr__(col))
+        save(self.le_dict_usl, Constants.ENCODER_USL_PATH, Constants.ENCODER_USL_FILE_NAME)
+        return df
+
+    def transform_usl_data(self, df: DataFrame) -> DataFrame:
+        """
+        Преобразование текстовых данных в числовой эквивалент по обученным категориальным признакам цехов-услуг
+        :param df: входные данные
+        :return: преобразованные данные
+        """
+        try:
+            for col in df.columns:
+                first = df.loc[df.index[0], col]
+                if isinstance(first, str) or first == -1:
+                    df[col] = self.le_dict_usl[col].transform(df.astype(str).__getattr__(col))
+            return df
+
+        except ValueError as ve:
+            raise ValueError(f"Неизвестные входные данные {str(ve)}")
+        except KeyError as ke:
+            raise KeyError(f"Неизвестные входные данные {str(ke)}")
+
+    def inverse_transform_osn_data(self, df: DataFrame) -> DataFrame:
+        """
+
+        :param df:
+        :return:
+        """
+        pass
+
+    def inverse_transform_usl_data(self, df: DataFrame) -> DataFrame:
+        """
+
+        :param df:
+        :return:
+        """
+        pass

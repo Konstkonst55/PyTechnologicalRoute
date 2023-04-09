@@ -20,12 +20,14 @@ def field_is_filled(line_edits: list) -> bool:
     False, если хотя бы одно поле не заполнено
     """
     attr = "text"
+
     for le in line_edits:
         if not hasattr(le, attr):
             raise AttributeError(f"Поле {type(le)} не содержит атрибута {attr}")
 
         if le.text() == "":
             return False
+
     return True
 
 

@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 from PyQt5.QtWidgets import QFileDialog
+from pandas import DataFrame
 
 from core.utils import Constants
 
@@ -25,12 +26,12 @@ def pick_file() -> str:
     )[0]  # только путь до файла без типов
 
 
-def read_data_file(file_name: str):
+def read_data_file(file_name: str) -> DataFrame:
     """
     Позволяет читать файлы данных различного типа
     (*.csv *.json *.xlsx *.xls *.xml *.html)
     :param file_name: путь к файлу
-    :return: DataFrame
+    :return: DataFrame с данными
     """
     file_type = Path(file_name).suffix
 

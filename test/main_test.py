@@ -11,6 +11,7 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import LabelEncoder
 
 from core.main import MainWindow
+from core.utils.FileReader import read_data_file
 from core.utils.Validator import field_is_filled
 
 
@@ -185,5 +186,17 @@ def __test_dict():
     print(len(dic.items()) < 1)
 
 
+def __test_df():
+    df = read_data_file("D:/College/Other/PyProjects/PyTechnologicalRoute/data/test_data/test_data_set.csv")
+
+    df.columns = [
+        "CustomerID", "Gender", "Age", "Annual Income",
+        "Spending Score", "Profession", "Work Experience",
+        "Family Size"
+    ]
+
+    print(df.columns)
+
+
 if __name__ == "__main__":
-    __test_dict()
+    __test_df()
