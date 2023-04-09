@@ -4,5 +4,5 @@
 # Custom
 scikit/
 *ipynb
-/test/
-/data/test_data/
+test/
+data/test_data/
