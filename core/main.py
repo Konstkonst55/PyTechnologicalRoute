@@ -19,7 +19,7 @@ from core.utils.MessageDisplayer import show_message
 from core.utils.Validator import field_is_filled, values_is_float
 from ui.MainWindow import MainWindowUi
 
-df_columns = ['name', 'gs_x', 'gs_y', 'gs_z', 'cg', 'mark', 'spf', 'tt']
+df_columns = ['name', 'gab', 'cg', 'mark', 'spf', 'tt', 'agr']
 osn_col_name = 'osn'
 usl_col_name = 'usl'
 
@@ -41,8 +41,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.data_processor = DataProcessor()
         self.ui = MainWindowUi()
         self.ui.setup_ui(self)
-        self.cb_list = {self.ui.cb_name, self.ui.cb_mark, self.ui.cb_spf, self.ui.cb_tt}
-        self.cb_dict = {self.ui.cb_name: "name", self.ui.cb_mark: "mark", self.ui.cb_spf: "spf", self.ui.cb_tt: "tt"}
+        self.cb_list = {self.ui.cb_name, self.ui.cb_mark, self.ui.cb_spf, self.ui.cb_tt, self.ui.cb_agr}
+        self.cb_dict = {
+            self.ui.cb_name: "name",
+            self.ui.cb_mark: "mark",
+            self.ui.cb_spf: "spf",
+            self.ui.cb_tt: "tt",
+            self.ui.cb_agr: "agr"
+        }
         self.type_is_osn = True
         self.init_ui()
         self.load_cb_data()
@@ -56,10 +62,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Установка ограничений для текстового ввода
         reg_ex = QRegExp(Constants.REGEX_FLOAT_TYPE)
-        self.ui.le_gsy.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsy))
-        self.ui.le_gsx.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsx))
+        self.ui.le_gab.setValidator(QRegExpValidator(reg_ex, self.ui.le_gab))
         self.ui.le_cg.setValidator(QRegExpValidator(reg_ex, self.ui.le_cg))
-        self.ui.le_gsz.setValidator(QRegExpValidator(reg_ex, self.ui.le_gsz))
 
         # Установка методов для кнопок
         self.ui.b_learn_open.clicked.connect(self.learn_open_click)
@@ -120,9 +124,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
 
             field_value_list = [
-                self.ui.le_gsy.text(),
-                self.ui.le_gsx.text(),
-                self.ui.le_gsz.text(),
+                self.ui.le_gab.text(),
                 self.ui.le_cg.text()
             ]
 
@@ -145,7 +147,7 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.data_processor.le_dict_osn[osn_col_name]
                         .inverse_transform(
                             predict_df.astype(int).__getattr__(osn_col_name)
-                        )
+                        )[0]
                     )
                 )
             else:
@@ -266,13 +268,12 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         return DataFrame(
             [[self.ui.cb_name.currentText(),
-              float(self.ui.le_gsx.text()),
-              float(self.ui.le_gsy.text()),
-              float(self.ui.le_gsz.text()),
+              float(self.ui.le_gab.text()),
               float(self.ui.le_cg.text()),
               self.ui.cb_mark.currentText(),
               self.ui.cb_spf.currentText(),
-              self.ui.cb_tt.currentText()]],
+              self.ui.cb_tt.currentText(),
+              self.ui.cb_agr.currentText()]],
             columns=df_columns
         )
 
