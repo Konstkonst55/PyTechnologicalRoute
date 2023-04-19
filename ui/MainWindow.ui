@@ -66,11 +66,11 @@ border: 0px solid black;
       <property name="tabBarAutoHide">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="tab_osn_usl" native="true">
+      <widget class="QWidget" name="tab_osn_usl">
        <attribute name="title">
-        <string>osn / usl</string>
+        <string>Осн. / Усл.</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
         <property name="spacing">
          <number>5</number>
         </property>
@@ -96,7 +96,7 @@ border: 0px solid black;
             <item>
              <widget class="QRadioButton" name="rb_osn">
               <property name="text">
-               <string>osn</string>
+               <string>Осн.</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -106,7 +106,7 @@ border: 0px solid black;
             <item>
              <widget class="QRadioButton" name="rb_usl">
               <property name="text">
-               <string>usl</string>
+               <string>Усл.</string>
               </property>
              </widget>
             </item>
@@ -300,7 +300,7 @@ color: black;
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="hl_text_top" stretch="3,1,1,1,1">
+         <layout class="QHBoxLayout" name="hl_text_top" stretch="3,1,1">
           <item>
            <layout class="QVBoxLayout" name="vl_name">
             <item>
@@ -312,7 +312,7 @@ color: black;
                </font>
               </property>
               <property name="text">
-               <string>name</string>
+               <string>Наименование</string>
               </property>
              </widget>
             </item>
@@ -368,7 +368,7 @@ color: #2B2A29;
           <item>
            <layout class="QVBoxLayout" name="vl_x">
             <item>
-             <widget class="QLabel" name="l_gsx">
+             <widget class="QLabel" name="l_gab">
               <property name="font">
                <font>
                 <family>Segoe UI Semilight</family>
@@ -376,12 +376,12 @@ color: #2B2A29;
                </font>
               </property>
               <property name="text">
-               <string>gs_x</string>
+               <string>Габариты</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="le_gsx">
+             <widget class="QLineEdit" name="le_gab">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -418,107 +418,6 @@ color: #2B2A29;
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="vl_y">
-            <item>
-             <widget class="QLabel" name="l_gsy">
-              <property name="font">
-               <font>
-                <family>Segoe UI Semilight</family>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>gs_y</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_gsy">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Segoe UI Semilight</family>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
-              <property name="toolTip">
-               <string>Размер Y</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">border: 1px solid #8F8FB0;
-border-radius: 5px;
-background: #D1D2FD solid;
-color: #2B2A29;
-</string>
-              </property>
-              <property name="inputMethodHints">
-               <set>Qt::ImhNone</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="vl_z">
-            <item>
-             <widget class="QLabel" name="l_gsz">
-              <property name="font">
-               <font>
-                <family>Segoe UI Semilight</family>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>gs_z</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_gsz">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <family>Segoe UI Semilight</family>
-                <pointsize>9</pointsize>
-               </font>
-              </property>
-              <property name="toolTip">
-               <string>Размер Z</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">border: 1px solid #8F8FB0;
-border-radius: 5px;
-background: #D1D2FD solid;
-color: #2B2A29;
-</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
            <layout class="QVBoxLayout" name="vl_cg">
             <item>
              <widget class="QLabel" name="l_cg">
@@ -529,7 +428,7 @@ color: #2B2A29;
                </font>
               </property>
               <property name="text">
-               <string>cg</string>
+               <string>Констр. группа</string>
               </property>
              </widget>
             </item>
@@ -573,6 +472,138 @@ color: #2B2A29;
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QLabel" name="l_spf">
+              <property name="font">
+               <font>
+                <family>Segoe UI Semilight</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Полуфабрикат</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb_spf">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Segoe UI Semilight</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Технические требования</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 1px solid #8F8FB0;
+border-radius: 5px;
+background: #D1D2FD solid;
+color: #2B2A29;
+</string>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+              <property name="insertPolicy">
+               <enum>QComboBox::InsertAtTop</enum>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QLabel" name="l_agr">
+              <property name="font">
+               <font>
+                <family>Segoe UI Semilight</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Агрегат</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cb_agr">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>Segoe UI Semilight</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Технические требования</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border: 1px solid #8F8FB0;
+border-radius: 5px;
+background: #D1D2FD solid;
+color: #2B2A29;
+</string>
+              </property>
+              <property name="editable">
+               <bool>true</bool>
+              </property>
+              <property name="insertPolicy">
+               <enum>QComboBox::InsertAtTop</enum>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QLabel" name="l_mark">
           <property name="font">
            <font>
@@ -581,72 +612,12 @@ color: #2B2A29;
            </font>
           </property>
           <property name="text">
-           <string>mark</string>
+           <string>Марка</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QComboBox" name="cb_mark">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Segoe UI Semilight</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="toolTip">
-           <string>Технические требования</string>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">border: 1px solid #8F8FB0;
-border-radius: 5px;
-background: #D1D2FD solid;
-color: #2B2A29;
-</string>
-          </property>
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-          <property name="insertPolicy">
-           <enum>QComboBox::InsertAtTop</enum>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="frame">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="l_spf">
-          <property name="font">
-           <font>
-            <family>Segoe UI Semilight</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>spf</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="cb_spf">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -701,7 +672,7 @@ color: #2B2A29;
            </font>
           </property>
           <property name="text">
-           <string>tt</string>
+           <string>Технические требования</string>
           </property>
          </widget>
         </item>
@@ -807,7 +778,7 @@ color: white;
              </font>
             </property>
             <property name="text">
-             <string>output</string>
+             <string>Вывод</string>
             </property>
            </widget>
           </item>
@@ -833,7 +804,7 @@ color: white;
 }</string>
             </property>
             <property name="text">
-             <string>clear input</string>
+             <string>Очистить ввод</string>
             </property>
            </widget>
           </item>
@@ -859,7 +830,7 @@ color: white;
 }</string>
             </property>
             <property name="text">
-             <string>clear output</string>
+             <string>Очистить вывод</string>
             </property>
            </widget>
           </item>
@@ -930,9 +901,9 @@ color: black;
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2" native="true">
+      <widget class="QWidget" name="tab_2">
        <attribute name="title">
-        <string>other</string>
+        <string>Другое</string>
        </attribute>
       </widget>
      </widget>
