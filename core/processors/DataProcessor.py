@@ -56,6 +56,7 @@ class DataProcessor:
             dataset = read_data_file(file_name)
             print_with_header("Набор данных", str(dataset))
             print_with_header("Корреляция", str(dataset.corr(numeric_only=True)))
+            print_with_header("Типы параметров", str(dataset.dtypes))
 
             # Удаление идентификаторов, т.к. он не участвуют в обучении
             if 'uid' in dataset.columns:
@@ -86,8 +87,7 @@ class DataProcessor:
         :return: преобразованные данные
         """
         for col in df.columns:
-            first = df.loc[df.index[0], col]
-            if isinstance(first, str) or first == -1:
+            if df[col].dtype == object or df[col].eq(-1).any():
                 self.le_dict_osn[col] = LabelEncoder()
                 df[col] = self.le_dict_osn[col].fit_transform(df.astype(str).__getattr__(col))
         save(self.le_dict_osn, Constants.ENCODER_OSN_PATH, Constants.ENCODER_OSN_FILE_NAME)
@@ -101,8 +101,7 @@ class DataProcessor:
         """
         try:
             for col in df.columns:
-                first = df.loc[df.index[0], col]
-                if isinstance(first, str) or first == -1:
+                if df[col].dtype == object or df[col].eq(-1).any():
                     df[col] = self.le_dict_osn[col].transform(df.astype(str).__getattr__(col))
             return df
 
@@ -118,8 +117,7 @@ class DataProcessor:
         :return: преобразованные данные
         """
         for col in df.columns:
-            first = df.loc[df.index[0], col]
-            if isinstance(first, str) or first == -1:
+            if df[col].dtype == object or df[col].eq(-1).any():
                 self.le_dict_usl[col] = LabelEncoder()
                 df[col] = self.le_dict_usl[col].fit_transform(df.astype(str).__getattr__(col))
         save(self.le_dict_usl, Constants.ENCODER_USL_PATH, Constants.ENCODER_USL_FILE_NAME)
@@ -133,8 +131,7 @@ class DataProcessor:
         """
         try:
             for col in df.columns:
-                first = df.loc[df.index[0], col]
-                if isinstance(first, str) or first == -1:
+                if df[col].dtype == object or df[col].eq(-1).any():
                     df[col] = self.le_dict_usl[col].transform(df.astype(str).__getattr__(col))
             return df
 

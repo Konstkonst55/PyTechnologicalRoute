@@ -20,7 +20,7 @@ def get_rfr_model(path: str, name: str) -> RandomForestRegressor:
         return joblib.load(full_path)
     else:
         print("get_rfr_model вернул RandomForestRegressor")
-        return RandomForestRegressor()
+        return RandomForestRegressor(n_estimators=150)
 
 
 def get_le(path: str, name: str) -> dict:
