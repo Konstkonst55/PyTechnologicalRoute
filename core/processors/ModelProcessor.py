@@ -1,12 +1,16 @@
+from subprocess import call
+
+import pydot as pydot
 from pandas import DataFrame
+from sklearn.tree import export_graphviz
 
 from core.processors.DataProcessor import DataProcessor
 from core.utils import Constants
 from core.utils.FileSaver import get_rfr_model, save
 from core.utils.MessageDisplayer import print_model_info
 
-
 # todo upd doc
+
 
 class ModelProcessor:
     """
@@ -33,6 +37,7 @@ class ModelProcessor:
     predict_osn(data: DataFrame, predict_col_name: str, data_processor: DataProcessor)
         выполняет прогнозирование данных
     """
+
     def __init__(self, model_osn, model_usl):
         self.rfr_model_osn = model_osn
         self.rfr_model_usl = model_usl
