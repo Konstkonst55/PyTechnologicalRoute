@@ -3,24 +3,24 @@ from operator import concat
 from pathlib import Path
 
 import joblib
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
 
-def get_rfr_model(path: str, name: str) -> RandomForestRegressor:
+def get_rfc_model(path: str, name: str) -> RandomForestClassifier:
     """
     Получение обученной модели Случайного леса, если такая есть по указанному пути.
     Иначе создается новая модель
     :param name: имя получаемой модели
     :param path: путь к модели
-    :return: RandomForestRegressor
+    :return: RandomForestClassifier
     """
     full_path = f"{path}{name}"
 
     if Path(full_path).exists():
         return joblib.load(full_path)
     else:
-        print("get_rfr_model вернул RandomForestRegressor")
-        return RandomForestRegressor(n_estimators=150)
+        print("get_rfr_model вернул RandomForestClassifier")
+        return RandomForestClassifier(n_estimators=150)
 
 
 def get_le(path: str, name: str) -> dict:

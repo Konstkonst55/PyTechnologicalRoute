@@ -86,6 +86,8 @@ class DataProcessor:
         :param df: входные данные
         :return: преобразованные данные
         """
+        df = df.sort_values(by="osn")
+
         for col in df.columns:
             if df[col].dtype == object or df[col].eq(-1).any():
                 self.le_dict_osn[col] = LabelEncoder()
@@ -116,6 +118,8 @@ class DataProcessor:
         :param df: входные данные
         :return: преобразованные данные
         """
+        df = df.sort_values(by="usl")
+
         for col in df.columns:
             if df[col].dtype == object or df[col].eq(-1).any():
                 self.le_dict_usl[col] = LabelEncoder()

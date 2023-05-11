@@ -14,7 +14,7 @@ from core.processors.DataProcessor import DataProcessor
 from core.processors.ModelProcessor import ModelProcessor
 from core.utils import Constants
 from core.utils.FileReader import pick_file, read_data_file
-from core.utils.FileSaver import get_rfr_model
+from core.utils.FileSaver import get_rfc_model
 from core.utils.MessageDisplayer import show_message
 from core.utils.Validator import field_is_filled, values_is_float
 from ui.MainWindow import MainWindowUi
@@ -35,8 +35,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.model_processor = ModelProcessor(
-            get_rfr_model(Constants.MODEL_OSN_PATH, Constants.MODEL_OSN_FILE_NAME),
-            get_rfr_model(Constants.MODEL_USL_PATH, Constants.MODEL_USL_FILE_NAME)
+            get_rfc_model(Constants.MODEL_OSN_PATH, Constants.MODEL_OSN_FILE_NAME),
+            get_rfc_model(Constants.MODEL_USL_PATH, Constants.MODEL_USL_FILE_NAME)
         )
         self.data_processor = DataProcessor()
         self.ui = MainWindowUi()

@@ -6,7 +6,7 @@ from sklearn.tree import export_graphviz
 
 from core.processors.DataProcessor import DataProcessor
 from core.utils import Constants
-from core.utils.FileSaver import get_rfr_model, save
+from core.utils.FileSaver import get_rfc_model, save
 from core.utils.MessageDisplayer import print_model_info
 
 # todo upd doc
@@ -18,10 +18,10 @@ class ModelProcessor:
 
     Атрибуты:
     --------
-    rfr_model_osn: RandomForestRegressor
+    rfr_model_osn: RandomForestClassifier
         модель с основными цехами
 
-    rfr_model_usl: RandomForestRegressor
+    rfr_model_usl: RandomForestClassifier
         модель с цехами услуг
 
     Методы:
@@ -49,9 +49,9 @@ class ModelProcessor:
         :param y_trn: входная выборка тренировочных данных
         :param x_test: входная выборка тестовых данных
         :param y_test: входная выборка тестовых данных
-        :return: модель RandomForestRegressor
+        :return: модель RandomForestClassifier
         """
-        self.rfr_model_osn = get_rfr_model(Constants.MODEL_OSN_PATH, Constants.MODEL_OSN_FILE_NAME)
+        self.rfr_model_osn = get_rfc_model(Constants.MODEL_OSN_PATH, Constants.MODEL_OSN_FILE_NAME)
         self.rfr_model_osn.fit(x_trn, y_trn)
         save(self.rfr_model_osn, Constants.MODEL_OSN_PATH, Constants.MODEL_OSN_FILE_NAME)
         print_model_info(self.rfr_model_osn, x_test, y_test)
@@ -63,9 +63,9 @@ class ModelProcessor:
         :param y_trn: входная выборка тренировочных данных
         :param x_test: входная выборка тестовых данных
         :param y_test: входная выборка тестовых данных
-        :return: модель RandomForestRegressor
+        :return: модель RandomForestClassifier
         """
-        self.rfr_model_usl = get_rfr_model(Constants.MODEL_USL_PATH, Constants.MODEL_USL_FILE_NAME)
+        self.rfr_model_usl = get_rfc_model(Constants.MODEL_USL_PATH, Constants.MODEL_USL_FILE_NAME)
         self.rfr_model_usl.fit(x_trn, y_trn)
         save(self.rfr_model_usl, Constants.MODEL_USL_PATH, Constants.MODEL_USL_FILE_NAME)
         print_model_info(self.rfr_model_usl, x_test, y_test)
