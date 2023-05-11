@@ -31,7 +31,10 @@ def print_model_info(model, x, y):
     :param y: тестовые данные y
     """
     # веса
-    print_with_header("Веса", model.feature_importances_)
+    print_with_header(
+        "Веса",
+        str([round(elem, 2) for elem in model.feature_importances_])
+    )
 
     # точность
     print_with_header("Качество", model.score(x, y).round(2))
